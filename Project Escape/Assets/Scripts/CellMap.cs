@@ -38,12 +38,12 @@ public class CellMap : MonoBehaviour
                 Vector3 position = new Vector3(j - 4.5f, -0.5f, 4.5f - i);
                 Quaternion rotation = new Quaternion();
                 cell.CellCode = coordinates[i, j];
-                Instantiate(cell, position, rotation);
-                if(cell.CellCode == 3)
+                CellBehaviour cb = Instantiate(cell, position, rotation, gameObject.transform);
+                if(cb.CellCode == 3)
                 {
-                    GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    Instantiate(capsule);
-                    capsule.transform.Translate(0, 5, 0);
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    player.transform.parent = cb.transform;
+                    player.transform.position = player.transform.parent.position + new Vector3(0, 2, 0);
                 }
             }
         }
