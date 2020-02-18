@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public int currentDir;
     public int newDir;
-    private CellMap controlador;
+    private CellMap controller;
+    int[,] mapa;
     private float currentDistance; 
     // Start is called before the first frame update
     void Start()
@@ -18,8 +19,9 @@ public class PlayerController : MonoBehaviour
         speed = 2.0f;
         currentDir = -1;
         currentDistance = 0;
-        controlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
-        if (!controlador) Debug.Log("No encontrado");
+        controller = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
+        mapa = controller.getMap();
+        if (!controller) Debug.Log("No encontrado");
         ResetPos();
     }
     // Update is called once per frame
@@ -40,12 +42,19 @@ public class PlayerController : MonoBehaviour
             if (currentDistance >= 1)
             {
                 ResetPos();
+                if (mapa[posz, posx] == 4)
+                {
+                    Application.Quit();
+                    if (UnityEditor.EditorApplication.isPlaying)
+                    {
+                        UnityEditor.EditorApplication.isPlaying = false;
+                    }
+                }
             }
         }
     }
     private bool canMoveTo(int c)
     {
-        int[,] mapa = controlador.getMap();
         switch (c)
         {
             case 0://Arriba
@@ -124,7 +133,7 @@ public class PlayerController : MonoBehaviour
     void ResetPos()
     {
         //Centra el movimiendo a la casilla.
-        transform.position = new Vector3(posx - controlador.posz, 0.5f, controlador.posx - posz);
+        transform.position = new Vector3(posx - controller.posz, 0.5f, controller.posx - posz);
         newDir = -1;
         currentDistance = 0;
         Debug.Log("Estoy en: " + posx + " " + posz);
