@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public int posx = 0;
+    public int posy = 1;
     public int posz = 0;
     public float speed;
     public int currentDir;
@@ -133,9 +134,18 @@ public class PlayerController : MonoBehaviour
     void ResetPos()
     {
         //Centra el movimiendo a la casilla.
+<<<<<<< HEAD
         transform.position = new Vector3(posx - controller.posz, 0.5f, controller.posx - posz);
+=======
+        transform.position = new Vector3(posx - controlador.posz, posy, controlador.posx - posz);
+>>>>>>> Jesús
         newDir = -1;
         currentDistance = 0;
         Debug.Log("Estoy en: " + posx + " " + posz);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Goal")
+            GameManager.manager.ExitGame();
     }
 }
