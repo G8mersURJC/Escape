@@ -70,7 +70,7 @@ public class CellMap : MonoBehaviour
                 {
                     GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                     cells[i,j].SetModel(capsule);
-                    capsule.transform.Translate(0, 5, 0);
+                    Destroy(capsule);
                     vPlayerSpawn.x = j;
                     vPlayerSpawn.y = i;
                 }

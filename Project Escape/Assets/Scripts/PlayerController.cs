@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         newDir = -1;
-        speed = 1.0f;
+        speed = 2.0f;
         currentDir = -1;
         currentDistance = 0;
         controlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
@@ -26,10 +26,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (newDir==-1) {
-            if (Input.GetKeyDown(KeyCode.W)) newDir = 0;
-            if (Input.GetKeyDown(KeyCode.A)) newDir = 1;
-            if (Input.GetKeyDown(KeyCode.S)) newDir = 2;
-            if (Input.GetKeyDown(KeyCode.D)) newDir = 3;
+            if (Input.GetKey(KeyCode.W)) newDir = 0;
+            if (Input.GetKey(KeyCode.A)) newDir = 1;
+            if (Input.GetKey(KeyCode.S)) newDir = 2;
+            if (Input.GetKey(KeyCode.D)) newDir = 3;
             if (newDir>=0&&!canMoveTo(newDir)) newDir = -1;
         }
         else
