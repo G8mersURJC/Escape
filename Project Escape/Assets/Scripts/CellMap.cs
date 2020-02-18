@@ -58,13 +58,7 @@ public class CellMap : MonoBehaviour
                
                 if(coordinates[i,j] == 3)
                 {
-<<<<<<< HEAD
-                    GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    cells[i,j].SetModel(capsule);
-                    Destroy(capsule);
-=======
                    
->>>>>>> Jesús
                     vPlayerSpawn.x = j;
                     vPlayerSpawn.y = i;
                 }
