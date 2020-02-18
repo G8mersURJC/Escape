@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public int posx = 0;
+    public int posy = 1;
     public int posz = 0;
     public float speed;
     public int currentDir;
@@ -26,10 +27,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (newDir==-1) {
-            if (Input.GetKeyDown(KeyCode.W)) newDir = 0;
-            if (Input.GetKeyDown(KeyCode.A)) newDir = 1;
-            if (Input.GetKeyDown(KeyCode.S)) newDir = 2;
-            if (Input.GetKeyDown(KeyCode.D)) newDir = 3;
+            if (Input.GetKey(KeyCode.W)) newDir = 0;
+            if (Input.GetKey(KeyCode.A)) newDir = 1;
+            if (Input.GetKey(KeyCode.S)) newDir = 2;
+            if (Input.GetKey(KeyCode.D)) newDir = 3;
             if (newDir>=0&&!canMoveTo(newDir)) newDir = -1;
         }
         else
@@ -124,9 +125,14 @@ public class PlayerController : MonoBehaviour
     void ResetPos()
     {
         //Centra el movimiendo a la casilla.
-        transform.position = new Vector3(posx - controlador.posz, 0.5f, controlador.posx - posz);
+        transform.position = new Vector3(posx - controlador.posz, posy, controlador.posx - posz);
         newDir = -1;
         currentDistance = 0;
         Debug.Log("Estoy en: " + posx + " " + posz);
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Goal")
+            GameManager.manager.ExitGame();
     }
 }

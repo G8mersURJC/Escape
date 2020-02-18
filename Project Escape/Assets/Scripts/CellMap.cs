@@ -19,6 +19,8 @@ public class CellMap : MonoBehaviour
     void Start()
     {
         cells = new Cell[iSizeX, iSizeY];
+       
+        
         /*
             0 -> Empty cell
             1 -> Cannot pass cell
@@ -26,11 +28,13 @@ public class CellMap : MonoBehaviour
             3 -> Start
             4 -> End
         */
+        
+        //Suelo lógico
         posx = 4.5f;
         posz = 4.5f;
         coordinates = new int[10, 10] {
             {0, 0, 0, 2, 0, 0, 0, 1, 0, 4},
-            {0, 1, 1, 1, 0, 1, 0, 1, 2, 1},
+            {0, 1, 1, 1, 0, 1, 0, 1, 0, 1},
             {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 1, 0, 1, 1, 0, 0, 0},
             {1, 0, 1, 1, 0, 1, 1, 0, 0, 0},
@@ -40,24 +44,10 @@ public class CellMap : MonoBehaviour
             {0, 3, 0, 0, 1, 0, 1, 1, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-        /*
-        for (int i = 0; i < coordinates.GetLength(0); i++)
-        {
-            for(int j = 0; j < coordinates.GetLength(1); j++)
-            {
-                Vector3 position = new Vector3(j - posz, -0.5f, posx - i);
-                Quaternion rotation = new Quaternion();
-                cell.CellCode = coordinates[i, j];
-                Instantiate(cell, position, rotation);
-                if(cell.CellCode == 3)
-                {
-                    GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    Instantiate(capsule);
-                    capsule.transform.Translate(0, 5, 0);
-                }
-            }
-        }*/
+       
 
+        //Establece el suelo para todos
+    
         for (int i = 0; i < coordinates.GetLength(0); i++)
         {
             for (int j = 0; j < coordinates.GetLength(1); j++)
@@ -68,17 +58,12 @@ public class CellMap : MonoBehaviour
                
                 if(coordinates[i,j] == 3)
                 {
-                    GameObject capsule = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                    cells[i,j].SetModel(capsule);
-                    capsule.transform.Translate(0, 5, 0);
+                   
                     vPlayerSpawn.x = j;
                     vPlayerSpawn.y = i;
                 }
-                else
-                {
-                 
-                        cells[i, j].SetModel(goModelList[coordinates[i, j]]);
-                }
+               
+                cells[i, j].SetModel(goModelList[coordinates[i, j]]);
                 cells[i, j].SetBehaviour();
 
             }

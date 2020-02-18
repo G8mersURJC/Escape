@@ -1,22 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5413821608936840018
-MonoBehaviour:
+--- !u!54 &-4392014399560443068
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6572356137095352560}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &2056082322501913686
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6572356137095352560}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0efa125a6ea79ef48931b26e16456b4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  posx: 0
-  posz: 0
-  speed: 0
-  currentDir: 0
-  newDir: 0
+  m_Radius: 0.24974781
+  m_Height: 1.2896652
+  m_Direction: 1
+  m_Center: {x: 0.0016557872, y: 1.0597932, z: 0.020658433}
 --- !u!95 &6696047627739747442
 Animator:
   serializedVersion: 3
@@ -36,6 +49,24 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &5413821608936840018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6572356137095352560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efa125a6ea79ef48931b26e16456b4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  posx: 0
+  posy: 1
+  posz: 0
+  speed: 0
+  currentDir: 0
+  newDir: 0
 --- !u!1001 &2888036631634381305
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101,7 +132,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 06698bc70910307499eb1fa09b631e5b,
         type: 3}
       propertyPath: m_Name
-      value: thor@Walking
+      value: thor@Walking Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06698bc70910307499eb1fa09b631e5b, type: 3}
