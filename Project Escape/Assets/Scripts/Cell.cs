@@ -84,10 +84,7 @@ public class Cell : MonoBehaviour
     public void SetModel(GameObject prefab)
     {
        
-       obj = Instantiate(prefab, new Vector3(vPos.x, (fSize/2), vPos.y), Quaternion.identity);
-      
-
-
+        obj = Instantiate(prefab, new Vector3(vPos.x, (fSize/2), vPos.y), Quaternion.identity);
         rend = obj.GetComponent<Renderer>();
     }
 }
