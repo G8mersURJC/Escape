@@ -19,6 +19,8 @@ public class LevelGenerator
         iMaxRoomSize = 10;
 
         llRooms = new List<Room>();
+
+        CheckPropertiesValues();
     }
 
     public LevelGenerator(int size, int roomNumber, int minRoomSize, int maxRoomSize)
@@ -29,6 +31,23 @@ public class LevelGenerator
         iMaxRoomSize = maxRoomSize;
 
         llRooms = new List<Room>();
+
+        CheckPropertiesValues();
+    }
+
+    private void CheckPropertiesValues()
+    {
+        if (v2iMapSize.x < 10)
+            v2iMapSize = new Vector2Int(10, 10);
+
+        if (iRoomCount < 1)
+            iRoomCount = 1;
+
+        if (iMinRoomSize < 3)
+            iMinRoomSize = 3;
+
+        if (iMaxRoomSize < 0 || iMaxRoomSize < iMinRoomSize)
+            iMaxRoomSize = iMinRoomSize;
     }
 
     public int[,] GenerateMap()
@@ -41,8 +60,7 @@ public class LevelGenerator
         llRooms = rp.GenerateRoomsInMap(v2iMapSize, iRoomCount, iMinRoomSize, iMaxRoomSize);
         llRooms = ra.ArrangeRooms(v2iMapSize, llRooms);
 
-
-        //Inicializamos las paredes intransitables a 1
+        //Inicializamos las casillas intransitables a -1 (No tiene gráfico)
         for (int i = 0; i < v2iMapSize.y; i++)
         {
             for (int j = 0; j < v2iMapSize.x; j++)
@@ -51,12 +69,9 @@ public class LevelGenerator
             }
         }
 
-        //Todas las casillas de las habitaciones se ponen a 1.
-        int c = 0;
+        //Todas las casillas de las habitaciones se ponen a 1 (Suelo).
         foreach (Room r in llRooms)
         {
-            Debug.Log("Room "+c+" en " + r.GetIndexCenter().x + ", " + r.GetIndexCenter().y);
-            c++;
             for (int i = r.GetIndexPosition().y; i < r.GetIndexPosition().y + r.GetHeight(); i++)
             {
                 for (int j = r.GetIndexPosition().x; j < r.GetIndexPosition().x + r.GetWidth(); j++)
@@ -67,10 +82,48 @@ public class LevelGenerator
             }
         }
 
+        //Conectamos las salas con pasillos
         CorridorGenerator cg = new CorridorGenerator();
         map = cg.GenerateCorridors(map, llRooms);
+        Debug.Log("PASILLOS HECHOS");
 
-        
+        //Generamos obstáculos aleatorios en las salas (poquitos)
+        foreach (Room r in llRooms)
+        {
+            for (int i = r.GetIndexPosition().y; i < r.GetIndexPosition().y + r.GetHeight(); i++)
+            {
+                for (int j = r.GetIndexPosition().x; j < r.GetIndexPosition().x + r.GetWidth(); j++)
+                {
+                    //Generamos un obstáculo con cierta probabilidad
+                    if (Random.Range(0, 100) > 95)
+                    {
+                        //Comprobamos primero si es una casilla dentro de las dimensiones del mapa
+                        if (!IsValidIndex(i, j))
+                        {
+                            continue;
+                        }
+
+                        bool valid = true;
+                        foreach (Conexion con in r.GetConections())
+                        {
+                            if (Conexion.ContainsPosition(con, j, i))
+                            {
+                                valid = false;
+                                break;
+                            }
+                        }
+
+                        if (valid)
+                        {
+                            map[i, j] = 1;
+
+                            if (Random.Range(0, 2) > 0)
+                                map[i, j] = 2;
+                        }
+                    }
+                }
+            }
+        }
 
         return map;
     }
@@ -79,4 +132,6 @@ public class LevelGenerator
     {
         return !(i > v2iMapSize.y - 1 || j > v2iMapSize.x - 1 || i < 0 || j < 0);
     }
+
+    
 }

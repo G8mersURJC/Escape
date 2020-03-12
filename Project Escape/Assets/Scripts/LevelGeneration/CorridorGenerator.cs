@@ -11,23 +11,37 @@ public class CorridorGenerator
     {
         this.map = map;
         List<Room> connectedRooms = new List<Room>();
+        List<Room> disconectedRooms = new List<Room>();
 
-        connectedRooms.Add(rooms[0]);
-        rooms.RemoveAt(0);
+        foreach(Room r in rooms)
+        {
+            disconectedRooms.Add(r);
+        }
+
+        //disconectedRooms.AddRange(disconectedRooms);
+
+        connectedRooms.Add(disconectedRooms[0]);
+        disconectedRooms.RemoveAt(0);
 
         pathGenerator = new AStarPathGenerator();
 
-        int tries = rooms.Count;
-        while (rooms.Count > 0 && tries > 0)
+        Debug.Log("Conectamos cosas");
+
+        int tries = disconectedRooms.Count;
+        while (disconectedRooms.Count > 0 && tries > 0)
         {
+            Debug.Log("Quedan por conectar "+disconectedRooms.Count);
+
             //Buscar la sala sin conectar más cercana a una de las ya conectadas.
-            List<Room> roomsToConnect = FindClosestRoomsIndexToConnect(connectedRooms, rooms);
+            List<Room> roomsToConnect = FindClosestRoomsIndexToConnect(connectedRooms, disconectedRooms);
+
 
             //Comprobar si ya existe un camino entre esas 2 salas.
             if (AreRoomsConnected(roomsToConnect[0], roomsToConnect[1]))
             {
+                Debug.Log("Estaban ya conectadas");
                 connectedRooms.Add(roomsToConnect[1]);
-                rooms.Remove(roomsToConnect[1]);
+                disconectedRooms.Remove(roomsToConnect[1]);
             }
             else
             {
@@ -53,7 +67,7 @@ public class CorridorGenerator
 
                 //Sacar la sala de la lista
                 connectedRooms.Add(roomsToConnect[1]);
-                rooms.Remove(roomsToConnect[1]);
+                disconectedRooms.Remove(roomsToConnect[1]);
             }
 
             tries--;
@@ -240,7 +254,7 @@ public class CorridorGenerator
 
         Vector2Int currentNode = StartCell;
         List<Vector2Int> path = new List<Vector2Int>();
-        int tries = 30;
+        //int tries = 30;
 
         //1ª Fase: Avanzamos 2 casillas en la dirección de salida tanto de A como de B
         currentNode = MoveVectorInDirection(currentNode, chosenASide);
@@ -253,6 +267,7 @@ public class CorridorGenerator
         TargetCell = MoveVectorInDirection(TargetCell, chosenBSide);
         path.Add(TargetCell);
 
+        int tries = 50;
         while (!Vector2Int.Equals(currentNode, TargetCell) && tries > 0)
         {
             //Modo simplón: Primero horizontal, después vertical

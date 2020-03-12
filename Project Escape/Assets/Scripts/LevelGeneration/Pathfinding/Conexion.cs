@@ -37,4 +37,30 @@ public class Conexion
     {
         return rooms;
     }
+
+    public static bool ContainsPosition(Conexion c, Vector2Int position)
+    {
+        for (int i = 0; i < c.GetCells().Count; i++)
+        {
+            if(c.GetCells()[i].x == position.x && c.GetCells()[i].y == position.y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool ContainsPosition(Conexion c, int x, int y)
+    {
+        for (int i = 0; i < c.GetCells().Count; i++)
+        {
+            if (c.GetCells()[i].x == x && c.GetCells()[i].y == y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

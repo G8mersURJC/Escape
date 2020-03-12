@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cell : MonoBehaviour
+public class CellV2 : MonoBehaviour
 {
     GameObject obj;
     GameObject asset;
@@ -15,7 +15,7 @@ public class Cell : MonoBehaviour
 
     private void Awake()
     {
-        rend = obj.GetComponent<Renderer>();
+        //rend = obj.GetComponent<Renderer>();
     }
     // Start is called before the first frame update
     void Start()
@@ -54,6 +54,7 @@ public class Cell : MonoBehaviour
         iCellCode = iCode;
     }
 
+    /*
     public void SetBehaviour()
     {
         switch (iCellCode)
@@ -80,10 +81,13 @@ public class Cell : MonoBehaviour
                 break;
         }
     }
-
+    */
     public void SetModel(GameObject prefab)
     {
         obj = Instantiate(prefab, new Vector3(vPos.x, (fSize/2), vPos.y), Quaternion.identity);
-        rend = obj.GetComponent<Renderer>();
+        obj.transform.SetParent(GameObject.Find("Map").transform);
+       
+
+        //rend = obj.GetComponent<Renderer>();
     }
 }

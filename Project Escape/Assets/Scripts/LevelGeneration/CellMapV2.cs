@@ -6,7 +6,7 @@ public class CellMapV2 : MonoBehaviour
 {
     Vector2 vSize;
     private int[,] coordinates;
-    private Cell[,] cells;
+    private CellV2[,] cells;
     public float posx;
     public float posz;
     public int iSizeX, iSizeY;
@@ -19,13 +19,13 @@ public class CellMapV2 : MonoBehaviour
 
         //PrintArray();
 
-        cells = new Cell[coordinates.GetLength(0), coordinates.GetLength(1)];
+        cells = new CellV2[coordinates.GetLength(0), coordinates.GetLength(1)];
 
         for (int i = 0; i < coordinates.GetLength(0); i++)
         {
             for (int j = 0; j < coordinates.GetLength(1); j++)
             {
-                cells[i, j] = new Cell();
+                cells[i, j] = new CellV2();
                 //cells[i, j] = new Cell();
                 cells[i, j].SetCellCode(coordinates[i, j]);
                 cells[i, j].SetPos(new Vector2(j - posz, posx - i));
@@ -40,25 +40,11 @@ public class CellMapV2 : MonoBehaviour
                 if(coordinates[i, j] != -1)
                 {
                     cells[i, j].SetModel(goModelList[coordinates[i, j]]);
-                    cells[i, j].SetBehaviour();
+                    //cells[i, j].SetBehaviour();
                 }
-                
+
 
             }
-        }
-    }
-
-    private void PrintArray()
-    {
-        for (int i = 0; i < coordinates.GetLength(0); i++)
-        {
-            string l = "";
-            for (int j = 0; j < coordinates.GetLength(1); j++)
-            {
-                l += coordinates[i, j];
-
-            }
-            Debug.Log(l);
         }
     }
 }
