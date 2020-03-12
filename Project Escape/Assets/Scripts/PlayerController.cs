@@ -11,13 +11,15 @@ public class PlayerController : MonoBehaviour
     public int currentDir;
     public int newDir;
     private CellMap controlador;
-    private float currentDistance; 
+    private float currentDistance;
+    public float pressedTime = 0;
+
     // Start is called before the first frame update
     void Start()
     {
         newDir = -1;
+        currentDir = 0;
         speed = 1.0f;
-        currentDir = -1;
         currentDistance = 0;
         controlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
         if (!controlador) Debug.Log("No encontrado");
@@ -26,21 +28,38 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (newDir==-1) {
-            if (Input.GetKey(KeyCode.W)) newDir = 0;
-            if (Input.GetKey(KeyCode.A)) newDir = 1;
-            if (Input.GetKey(KeyCode.S)) newDir = 2;
-            if (Input.GetKey(KeyCode.D)) newDir = 3;
-            if (newDir>=0&&!canMoveTo(newDir)) newDir = -1;
+        if (pressedTime > 0)
+        {
+            pressedTime -= 0.001f;
+            Debug.Log(pressedTime);
         }
         else
         {
-            rotateFacing(newDir);
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            currentDistance += speed * Time.deltaTime;
-            if (currentDistance >= 1)
+            if (newDir == -1)
             {
-                ResetPos();
+                if (Input.GetKey(KeyCode.W)) newDir = 0;
+                if (Input.GetKey(KeyCode.A)) newDir = 1;
+                if (Input.GetKey(KeyCode.S)) newDir = 2;
+                if (Input.GetKey(KeyCode.D)) newDir = 3;
+                if (newDir >= 0 && (newDir == currentDir) && !canMoveTo(newDir))
+                {
+                    newDir = -1;
+                }
+            }
+            else if (newDir == currentDir)
+            {
+                transform.Translate(Vector3.forward * speed * Time.deltaTime);
+                currentDistance += speed * Time.deltaTime;
+                if (currentDistance >= 1)
+                {
+                    ResetPos();
+                }
+            }
+            else
+            {
+                rotateFacing(newDir);
+                newDir = -1;
+                pressedTime = 2 * Time.deltaTime;
             }
         }
     }
@@ -110,9 +129,6 @@ public class PlayerController : MonoBehaviour
             }
             currentDir = newDir;
         }
-        
-       
-
         return false;
     }
 
