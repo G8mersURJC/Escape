@@ -6,7 +6,7 @@ public class RoomPlacer
 {
     public List<Room> GenerateRoomsInMap(Vector2Int v2iMapSize, int iRoomCount, int iMinRoomSize, int iMaxRoomSize)
     {
-        List<Room> lRoomList = new List<Room>();
+        List<Room> lrRooms = new List<Room>();
 
         for (int i = 0; i < iRoomCount; i++)
         {
@@ -15,10 +15,9 @@ public class RoomPlacer
 
             Room newRoom = new Room(i, new Vector2Int(Random.Range(0, v2iMapSize.x - width), Random.Range(0, v2iMapSize.y - height)), width, height);
 
-            //Debug.Log("Room " + i + " en " + newRoom.GetIndexPosition().x + ", " + newRoom.GetIndexPosition().y);
-            lRoomList.Add(newRoom);
+            lrRooms.Add(newRoom);
         }
 
-        return lRoomList;
+        return lrRooms;
     }
 }

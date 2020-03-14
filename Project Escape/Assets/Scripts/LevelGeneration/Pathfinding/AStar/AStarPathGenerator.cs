@@ -133,43 +133,6 @@ public class AStarPathGenerator
 
         return lista;
     }
-
-    /*
-    public List<PathNode> GetNeighborNodes(PathNode n, bool ignoreTerrain)
-    {
-        List<PathNode> lista = new List<PathNode>();
-
-        lista.Add(new PathNode(new Vector2Int(n.getIndexPosition().x - 1, n.getIndexPosition().y), n));
-        lista.Add(new PathNode(new Vector2Int(n.getIndexPosition().x + 1, n.getIndexPosition().y), n));
-        lista.Add(new PathNode(new Vector2Int(n.getIndexPosition().x, n.getIndexPosition().y + 1), n));
-        lista.Add(new PathNode(new Vector2Int(n.getIndexPosition().x, n.getIndexPosition().y - 1), n));
-
-        //Comprobamos que los nodos sean validos
-        for (int i = lista.Count - 1; i >= 0; i--)
-        {
-            if (lista[i].getIndexPosition().x > map.GetLength(1) - 1 || lista[i].getIndexPosition().x < 0 ||
-                lista[i].getIndexPosition().y > map.GetLength(0) - 1 || lista[i].getIndexPosition().y < 0)
-            {
-                lista.RemoveAt(i);
-            }
-        }
-
-        if(lista.Count > 0)
-        {
-            for (int i = lista.Count - 1; i >= 0; i--)
-            {
-                //Debug.Log(i+"-> "+ lista[i].getIndexPosition().x+", "+lista[i].getIndexPosition().y);
-                if (!ignoreTerrain && map[lista[i].getIndexPosition().y, lista[i].getIndexPosition().x] != 0)
-                {
-                    lista.RemoveAt(i);
-                }
-            }
-        }
-
-
-        return lista;
-    }
-    */
    
     private float GetDistanceBetweenNodePaths(PathNode a, PathNode b)
     {

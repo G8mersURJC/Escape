@@ -8,8 +8,12 @@ public class LevelGenerator
     private int iRoomCount;
     private int iMinRoomSize;
     private int iMaxRoomSize;
+    private int[,] map;
 
     private List<Room> llRooms;
+
+    private Vector2Int v2iSpawnCell;
+    private Vector2Int v2iExitCell;
 
     public LevelGenerator()
     {
@@ -18,9 +22,10 @@ public class LevelGenerator
         iMinRoomSize = 4;
         iMaxRoomSize = 10;
 
-        llRooms = new List<Room>();
+        v2iSpawnCell = new Vector2Int();
+        v2iExitCell = new Vector2Int();
 
-        CheckPropertiesValues();
+        llRooms = new List<Room>();
     }
 
     public LevelGenerator(int size, int roomNumber, int minRoomSize, int maxRoomSize)
@@ -30,12 +35,28 @@ public class LevelGenerator
         iMinRoomSize = minRoomSize;
         iMaxRoomSize = maxRoomSize;
 
-        llRooms = new List<Room>();
+        v2iSpawnCell = new Vector2Int();
+        v2iExitCell = new Vector2Int();
 
-        CheckPropertiesValues();
+        llRooms = new List<Room>();
     }
 
-    private void CheckPropertiesValues()
+    public int[,] GenerateMap()
+    {
+        CheckForInvalidParameters();
+
+        map = new int[v2iMapSize.x, v2iMapSize.y];
+
+        GenerateRooms();
+        GenerateCorridors();
+        GenerateObstacles();
+
+        PlaceSpawnAndExit();
+
+        return map;
+    }
+
+    private void CheckForInvalidParameters()
     {
         if (v2iMapSize.x < 10)
             v2iMapSize = new Vector2Int(10, 10);
@@ -50,82 +71,51 @@ public class LevelGenerator
             iMaxRoomSize = iMinRoomSize;
     }
 
-    public int[,] GenerateMap()
+    private void GenerateRooms()
     {
-        int[,] map = new int[v2iMapSize.x, v2iMapSize.y];
-
         RoomPlacer rp = new RoomPlacer();
         RoomArranger ra = new RoomArranger();
 
         llRooms = rp.GenerateRoomsInMap(v2iMapSize, iRoomCount, iMinRoomSize, iMaxRoomSize);
         llRooms = ra.ArrangeRooms(v2iMapSize, llRooms);
 
-        //Inicializamos las casillas intransitables a -1 (No tiene gráfico)
+        FillMapCellsWithValue(-1);
+        FillRoomCellsWithValue(0);
+    }
+
+    private void FillMapCellsWithValue(int value)
+    {
         for (int i = 0; i < v2iMapSize.y; i++)
         {
             for (int j = 0; j < v2iMapSize.x; j++)
             {
-                map[i, j] = -1;
+                map[i, j] = value;
             }
         }
+    }
 
-        //Todas las casillas de las habitaciones se ponen a 1 (Suelo).
+    private void FillRoomCellsWithValue(int value)
+    {
         foreach (Room r in llRooms)
         {
+            //Debug.Log("Room "+r.GetId()+" en "+r.GetIndexPosition().ToString());
+
             for (int i = r.GetIndexPosition().y; i < r.GetIndexPosition().y + r.GetHeight(); i++)
             {
                 for (int j = r.GetIndexPosition().x; j < r.GetIndexPosition().x + r.GetWidth(); j++)
                 {
                     if (IsValidIndex(i, j))
-                        map[i, j] = 0;
-                }
-            }
-        }
-
-        //Conectamos las salas con pasillos
-        CorridorGenerator cg = new CorridorGenerator();
-        map = cg.GenerateCorridors(map, llRooms);
-        Debug.Log("PASILLOS HECHOS");
-
-        //Generamos obstáculos aleatorios en las salas (poquitos)
-        foreach (Room r in llRooms)
-        {
-            for (int i = r.GetIndexPosition().y; i < r.GetIndexPosition().y + r.GetHeight(); i++)
-            {
-                for (int j = r.GetIndexPosition().x; j < r.GetIndexPosition().x + r.GetWidth(); j++)
-                {
-                    //Generamos un obstáculo con cierta probabilidad
-                    if (Random.Range(0, 100) > 95)
                     {
-                        //Comprobamos primero si es una casilla dentro de las dimensiones del mapa
-                        if (!IsValidIndex(i, j))
-                        {
-                            continue;
-                        }
-
-                        bool valid = true;
-                        foreach (Conexion con in r.GetConections())
-                        {
-                            if (Conexion.ContainsPosition(con, j, i))
-                            {
-                                valid = false;
-                                break;
-                            }
-                        }
-
-                        if (valid)
-                        {
-                            map[i, j] = 1;
-
-                            if (Random.Range(0, 2) > 0)
-                                map[i, j] = 2;
-                        }
+                        map[i, j] = value;
                     }
+                    else
+                    {
+                        Debug.Log("CASILLA DE SALA INVALIDA: "+i+", "+j);
+                    }
+                        
                 }
             }
         }
-
-        return map;
     }
 
     private bool IsValidIndex(int i, int j)
@@ -133,5 +123,152 @@ public class LevelGenerator
         return !(i > v2iMapSize.y - 1 || j > v2iMapSize.x - 1 || i < 0 || j < 0);
     }
 
-    
+    private void GenerateCorridors()
+    {
+        //Conectamos las salas con pasillos
+        CorridorGenerator cg = new CorridorGenerator();
+        map = cg.GenerateCorridors(map, llRooms);
+    }
+
+    private void GenerateObstacles()
+    {
+        foreach (Room r in llRooms)
+        {
+            
+            /*
+            foreach (Conection con in r.GetConections())
+            {
+                for (int i = 0; i < con.GetEndPoints().Count; i++)
+                {
+                    if (con.GetRooms()[i].GetId() == r.GetId())
+                    {
+                        map[con.GetEndPoints()[i].y, con.GetEndPoints()[i].x] = 3;
+                    }
+                }
+            }
+            */
+
+            //Generamos una lista con las casillas prohibidas. En estas no se van a generar obstaculos.
+            List<Vector2Int> forbiddenCells = GetForbiddenCells(r);
+
+            for (int i = r.GetIndexPosition().y; i < r.GetIndexPosition().y + r.GetHeight(); i++)
+            {
+                for (int j = r.GetIndexPosition().x; j < r.GetIndexPosition().x + r.GetWidth(); j++)
+                {
+                    if (!IsValidIndex(i, j))
+                    {
+                        continue;
+                    }
+
+                    //Generamos un obstáculo con cierta probabilidad
+                    if (Random.Range(0, 100) > 97 && !forbiddenCells.Contains(new Vector2Int(j, i)))
+                    {
+                        map[i, j] = 1;
+                        if (Random.Range(0, 2) > 0)
+                            map[i, j] = 2;
+                    }
+                }
+            }
+        }
+    }
+
+    private List<Vector2Int> GetForbiddenCells(Room r)
+    {
+        List<Vector2Int> list = new List<Vector2Int>();
+
+        foreach (Conection con in r.GetConections())
+        {
+            foreach (Vector2Int v in con.GetEndPoints())
+            {
+                List<Vector2Int> adyacents = GetAdyacentNodes(v);
+                foreach (Vector2Int n in adyacents)
+                {
+                    list.Add(n);
+                }
+            }
+        }
+
+        if (r.ContainsPlayerSpawn())
+            list.Add(r.GetPlayerSpawnPosition());
+
+        if (r.ContainsMapExit())
+            list.Add(r.GetMapExitPosition());
+
+        //Debug.Log("Prohibidas: "+list.Count);
+
+        return list;
+    }
+
+    private List<Vector2Int> GetAdyacentNodes(Vector2Int n)
+    {
+        List<Vector2Int> adyacentList = new List<Vector2Int>();
+
+        for (int i = n.y - 1; i <= n.y + 1; i++)
+        {
+            for (int j = n.x - 1; j <= n.x + 1; j++)
+            {
+                adyacentList.Add(new Vector2Int(j, i));
+            }
+        }
+
+        return adyacentList;
+    }
+
+    private void PlaceSpawnAndExit()
+    {
+        //Buscamos las salas más alejadas entre si
+        //Tomamos como referencia la primera sala de la lista
+        Room rSpawn = llRooms[0];
+        Room rExit = llRooms[0];
+
+        if (llRooms.Count > 1)
+        {
+            rExit = llRooms[1];
+        }
+
+        float furthestDistance = Vector2Int.Distance(rSpawn.GetIndexCenter(), rExit.GetIndexCenter());
+
+        foreach (Room rA in llRooms)
+        {
+            foreach (Room rB in llRooms)
+            {
+                if (Vector2Int.Distance(rA.GetIndexCenter(), rB.GetIndexCenter()) > furthestDistance
+                    && rA.GetId() != rB.GetId())
+                {
+                    rSpawn = rA;
+                    rExit = rB;
+                    furthestDistance = Vector2Int.Distance(rA.GetIndexCenter(), rB.GetIndexCenter());
+                }
+            }
+        }
+
+        PlaceValueInRandomCellOfARoom(3, rSpawn);
+        PlaceValueInRandomCellOfARoom(4, rExit);
+    }
+
+    private void PlaceValueInRandomCellOfARoom(int value, Room r)
+    {
+        bool placed = false;
+        while (!placed)
+        {
+            int i = Random.Range(r.GetIndexPosition().y, r.GetIndexPosition().y + r.GetHeight());
+            int j = Random.Range(r.GetIndexPosition().x, r.GetIndexPosition().x + r.GetWidth());
+
+            if(!GetForbiddenCells(r).Contains(new Vector2Int(j, i)))
+            {
+                map[i, j] = value;
+                placed = true;
+
+                if(value == 3)
+                {
+                    r.SetPlayerSpawnPosition(new Vector2Int(j, i));
+                }else if(value == 4)
+                {
+                    r.SetMapExitPosition(new Vector2Int(j, i));
+                }
+
+
+            }
+        }
+    }
 }

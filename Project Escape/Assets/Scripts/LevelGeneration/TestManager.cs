@@ -11,9 +11,12 @@ public class TestManager : MonoBehaviour
     public int minRoomSize;
     public int maxRoomSize;
 
+    private CellMapV2 cm;
+    private LevelGenerator lg;
+
     void Start()
     {
-        
+        cm = GetComponentInParent<CellMapV2>();
     }
 
     // Update is called once per frame
@@ -28,8 +31,8 @@ public class TestManager : MonoBehaviour
             }
 
             //Generamos un mapa nuevo
-            LevelGenerator lg = new LevelGenerator(mapSize, roomNumber, minRoomSize, maxRoomSize);
-            CellMapV2 cm = GetComponentInParent<CellMapV2>();
+            lg = new LevelGenerator(mapSize, roomNumber, minRoomSize, maxRoomSize);
+            
             cm.SetupMap(lg.GenerateMap());
         }
     }
