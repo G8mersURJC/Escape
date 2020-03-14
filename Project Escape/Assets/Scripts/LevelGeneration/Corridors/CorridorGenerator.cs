@@ -232,18 +232,18 @@ public class CorridorGenerator
         return false;
     }
 
-    private bool IsRoomAtMapBorder(Room r, int side)
+    private bool IsRoomCloseToMapBorder(Room r, int side)
     {
         switch (side)
         {
             case 0:
-                return (r.GetIndexPosition().y == 0);
+                return (r.GetIndexPosition().y < 2);
             case 1:
-                return (r.GetIndexPosition().y + r.GetHeight() >= map.GetLength(0));
+                return (r.GetIndexPosition().y + r.GetHeight() >= map.GetLength(0) - 2);
             case 2:
-                return (r.GetIndexPosition().x == 0);
+                return (r.GetIndexPosition().x  < 2);
             case 3:
-                return (r.GetIndexPosition().x + r.GetWidth() >= map.GetLength(1));
+                return (r.GetIndexPosition().x + r.GetWidth() >= map.GetLength(1) - 2);
         }
 
         return false;
@@ -259,19 +259,19 @@ public class CorridorGenerator
         if ((a.GetIndexPosition().y < b.GetIndexPosition().y))
         {
             //A por encima de B
-            if(!IsRoomAtMapBorder(a, 1))
+            if(!IsRoomCloseToMapBorder(a, 1))
                 SidesForA.Add(1);
 
-            if (!IsRoomAtMapBorder(b, 0))
+            if (!IsRoomCloseToMapBorder(b, 0))
                 SidesForB.Add(0);
 
         }
         else if((a.GetIndexPosition().y > b.GetIndexPosition().y))
         {
             //A por debajo de B
-            if (!IsRoomAtMapBorder(a, 0))
+            if (!IsRoomCloseToMapBorder(a, 0))
                 SidesForA.Add(0);
-            if (!IsRoomAtMapBorder(b, 1))
+            if (!IsRoomCloseToMapBorder(b, 1))
                 SidesForB.Add(1);
         }
         else
@@ -282,17 +282,17 @@ public class CorridorGenerator
         if (a.GetIndexPosition().x < b.GetIndexPosition().x)
         {
             //A a la izquierda de B
-            if (!IsRoomAtMapBorder(a, 3))
+            if (!IsRoomCloseToMapBorder(a, 3))
                 SidesForA.Add(3);
-            if (!IsRoomAtMapBorder(b, 2))
+            if (!IsRoomCloseToMapBorder(b, 2))
                 SidesForB.Add(2);
         }
         else if(a.GetIndexPosition().x > b.GetIndexPosition().x)
         {
             //A a la derecha de B
-            if (!IsRoomAtMapBorder(a, 2))
+            if (!IsRoomCloseToMapBorder(a, 2))
                 SidesForA.Add(2);
-            if (!IsRoomAtMapBorder(b, 3))
+            if (!IsRoomCloseToMapBorder(b, 3))
                 SidesForB.Add(3);
         }
         else
@@ -369,7 +369,7 @@ public class CorridorGenerator
         bool BMovingHorizontal = (ChosenSides[1] == 0 || ChosenSides[1] == 1);
 
         //2ª Fase: Generamos el camino para conectar ambos puntos
-        int tries = 50;
+        int tries = 100;
         while (!Vector2Int.Equals(currentNode, TargetCell) && tries > 0)
         {
             //CurrentNode trata de desplazarse hacia Target

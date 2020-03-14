@@ -11,6 +11,7 @@ public class ObjectPlacer
     private Vector2Int v2iLevelExitPosition;
     private Room rSpawn;
     private Room rExit;
+    private int iMinimumEnemiesPerRoom = 2;
 
     public ObjectPlacer()
     {
@@ -24,7 +25,6 @@ public class ObjectPlacer
 
         PlaceSpawnAndExit();
         PlaceObstacles();
-        PlaceEnemySpawns();
 
         return map;
     }
@@ -98,6 +98,7 @@ public class ObjectPlacer
                 }
             }
             */
+            int enemiesPlaced = 0;
 
             //Generamos una lista con las casillas prohibidas. En estas no se van a generar obstaculos.
             List<Vector2Int> forbiddenCells = GetForbiddenCells(r);
@@ -117,12 +118,26 @@ public class ObjectPlacer
                         map[i, j] = 1;
                         if (Random.Range(0, 2) > 0)
                             map[i, j] = 2;
-                    }else if(Random.Range(0, 100) > 96)
+                    }
+                    else if(Random.Range(0, 100) > 96)
                     {
                         map[i, j] = 6;
+                        enemiesPlaced++;
                     }
                 }
             }
+
+            if(enemiesPlaced < iMinimumEnemiesPerRoom)
+            {
+                
+                while(enemiesPlaced < iMinimumEnemiesPerRoom)
+                {
+                    PlaceValueInRandomCellOfARoom(6, r);
+                    enemiesPlaced++;
+                }
+
+            }
+
         }
     }
 
@@ -171,10 +186,5 @@ public class ObjectPlacer
         }
 
         return adyacentList;
-    }
-
-    private void PlaceEnemySpawns()
-    {
-
     }
 }

@@ -276,6 +276,8 @@ MonoBehaviour:
   - {fileID: 72056050440938163, guid: be7f8fe7d82365f449da7d400b6a69bc, type: 3}
   - {fileID: 5372930385910304427, guid: 9677f767fad4ec441b3cdb999f2dbf7e, type: 3}
   - {fileID: 7153517667162094144, guid: 5dde8cdf938f98941a440e59909d79fc, type: 3}
+  - {fileID: 1349552004459402675, guid: 999922806bd8fe84bb9d44985693b8d7, type: 3}
+  - {fileID: 6263924433652858277, guid: 6b82d6f4f0e7ded4ea21dec4b8b44b51, type: 3}
 --- !u!114 &918181680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,8 +292,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapParent: {fileID: 788122459}
   mapSize: 20
-  roomNumber: 1
-  minRoomSize: 7
+  roomNumber: 5
+  minRoomSize: 3
   maxRoomSize: 10
 --- !u!4 &918181681
 Transform:
