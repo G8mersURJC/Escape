@@ -232,38 +232,77 @@ public class CorridorGenerator
         return false;
     }
 
+    private bool IsRoomAtMapBorder(Room r, int side)
+    {
+        switch (side)
+        {
+            case 0:
+                return (r.GetIndexPosition().y == 0);
+            case 1:
+                return (r.GetIndexPosition().y + r.GetHeight() >= map.GetLength(0));
+            case 2:
+                return (r.GetIndexPosition().x == 0);
+            case 3:
+                return (r.GetIndexPosition().x + r.GetWidth() >= map.GetLength(1));
+        }
+
+        return false;
+    }
+
     private int[] FindSidesToConnect(Room a, Room b)
     {
-        int[] Asides = new int[2];
-        int[] Bsides = new int[2];
+        List<int> SidesForA = new List<int>();
+        List<int> SidesForB = new List<int>();
 
         //Determinamos la posición relativa de las Salas
         //0 = Up, 1 = Down, 2 = Left, 3 = Right
         if ((a.GetIndexPosition().y < b.GetIndexPosition().y))
         {
-            Asides[0] = 1;
-            Bsides[0] = 0;
+            //A por encima de B
+            if(!IsRoomAtMapBorder(a, 1))
+                SidesForA.Add(1);
+
+            if (!IsRoomAtMapBorder(b, 0))
+                SidesForB.Add(0);
+
+        }
+        else if((a.GetIndexPosition().y > b.GetIndexPosition().y))
+        {
+            //A por debajo de B
+            if (!IsRoomAtMapBorder(a, 0))
+                SidesForA.Add(0);
+            if (!IsRoomAtMapBorder(b, 1))
+                SidesForB.Add(1);
         }
         else
         {
-            Asides[0] = 0;
-            Bsides[0] = 1;
+            //A a la altura de B
         }
 
-        if (a.GetIndexPosition().x <= b.GetIndexPosition().x)
+        if (a.GetIndexPosition().x < b.GetIndexPosition().x)
         {
-            Asides[1] = 3;
-            Bsides[1] = 2;
+            //A a la izquierda de B
+            if (!IsRoomAtMapBorder(a, 3))
+                SidesForA.Add(3);
+            if (!IsRoomAtMapBorder(b, 2))
+                SidesForB.Add(2);
+        }
+        else if(a.GetIndexPosition().x > b.GetIndexPosition().x)
+        {
+            //A a la derecha de B
+            if (!IsRoomAtMapBorder(a, 2))
+                SidesForA.Add(2);
+            if (!IsRoomAtMapBorder(b, 3))
+                SidesForB.Add(3);
         }
         else
         {
-            Asides[1] = 2;
-            Bsides[1] = 3;
+            //A a la altura de B
         }
 
         //De las posibles opciones, seleccionamos aleatoriamente
-        int chosenASide = Asides[Random.Range(0, 2)];
-        int chosenBSide = Bsides[Random.Range(0, 2)];
+        int chosenASide = SidesForA[Random.Range(0, SidesForA.Count)];
+        int chosenBSide = SidesForB[Random.Range(0, SidesForB.Count)];
 
         return new int[] {chosenASide, chosenBSide};
     }
@@ -393,7 +432,6 @@ public class CorridorGenerator
                 {
                     TargetCell = new Vector2Int(TargetCell.x, TargetCell.y + 1);
                     path.Add(TargetCell);
-                    continue;
                 }
                 else if (TargetCell.y > currentNode.y && CanMoveToDirection(TargetCell, 0))
                 {

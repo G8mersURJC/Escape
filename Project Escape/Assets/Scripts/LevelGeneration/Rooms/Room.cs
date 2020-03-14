@@ -10,11 +10,6 @@ public class Room
     private int iId;
     private List<Conection> lcConections;
 
-    private Vector2Int v2PlayerSpawnPosition;
-    private Vector2Int v2LevelExitPosition;
-    private bool containsPlayerSpawn;
-    private bool containsMapExit;
-
     public Room()
     {
         this.v2IndexPosition = new Vector2Int();
@@ -22,11 +17,6 @@ public class Room
         this.iHeight = 3;
         this.iId = 0;
         this.lcConections = new List<Conection>();
-
-        this.v2PlayerSpawnPosition = new Vector2Int();
-        this.v2LevelExitPosition = new Vector2Int();
-        containsPlayerSpawn = false;
-        containsMapExit = false;
     }
 
     public Room(int id, Vector2Int indexPosition, int roomWidth, int roomHeight)
@@ -36,11 +26,6 @@ public class Room
         this.iWidth = roomWidth;
         this.iHeight = roomHeight;
         this.lcConections = new List<Conection>();
-
-        this.v2PlayerSpawnPosition = new Vector2Int();
-        this.v2LevelExitPosition = new Vector2Int();
-        containsPlayerSpawn = false;
-        containsMapExit = false;
     }
 
     public Vector2Int GetIndexPosition()
@@ -91,38 +76,6 @@ public class Room
     public List<Conection> GetConections()
     {
         return this.lcConections;
-    }
-
-    public bool ContainsPlayerSpawn()
-    {
-        return containsPlayerSpawn;
-    }
-
-    public Vector2Int GetPlayerSpawnPosition()
-    {
-        return v2PlayerSpawnPosition;
-    }
-
-    public void SetPlayerSpawnPosition(Vector2Int spawnPos)
-    {
-        containsPlayerSpawn = true;
-        v2PlayerSpawnPosition = spawnPos;
-    }
-
-    public bool ContainsMapExit()
-    {
-        return containsMapExit;
-    }
-
-    public Vector2Int GetMapExitPosition()
-    {
-        return v2LevelExitPosition;
-    }
-
-    public void SetMapExitPosition(Vector2Int exitPos)
-    {
-        containsMapExit = true;
-        v2PlayerSpawnPosition = exitPos;
     }
 
     public List<Vector2Int> GetUpperSideCells()
