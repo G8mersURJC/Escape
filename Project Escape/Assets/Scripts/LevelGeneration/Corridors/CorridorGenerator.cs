@@ -38,8 +38,6 @@ public class CorridorGenerator
             {
                 if (a.GetId() != b.GetId() && !ConectionAlreadyExist(a, b))
                 {
-                    Conection c = new Conection(a, b);
-
                     if (Room.CheckColision(a, b))
                     {
                         //Buscamos una casilla colindante entre ambas salas
@@ -47,7 +45,7 @@ public class CorridorGenerator
                         {
                             if (Room.HasCellInPosition(b, v))
                             {
-                                c.SetEndPoints(v, v);
+                                AddConectionBetweenColidingRooms(a, b, v);
                                 break;
                             }
                         }
@@ -59,28 +57,29 @@ public class CorridorGenerator
                         {
                             if (Room.IsCellAdyacentToRoom(v, b))
                             {
-                                c.SetEndPoints(v, v);
+                                AddConectionBetweenColidingRooms(a, b, v);
                                 break;
                             }
                         }
-                    }
-
-                    
-                    if (c.GetEndPoints().Count > 0)
-                    {
-                        a.AddConection(c);
-                        b.AddConection(c);
                     }
                 }
             }
         }
     }
 
+    private void AddConectionBetweenColidingRooms(Room a, Room b, Vector2Int n)
+    {
+        List<Vector2Int> conectionNodes = new List<Vector2Int>();
+        conectionNodes.Add(n);
+        a.AddConection(new Conection(b, conectionNodes, conectionNodes));
+        b.AddConection(new Conection(a, conectionNodes, conectionNodes));
+    }
+
     private bool ConectionAlreadyExist(Room a, Room b)
     {
         foreach (Conection c in a.GetConections())
         {
-            if (c.GetRooms().Contains(a) && c.GetRooms().Contains(b))
+            if (c.GetRoom().GetId() == b.GetId())
             {
                 return true;
             }
@@ -107,15 +106,9 @@ public class CorridorGenerator
             }
             else
             {
-                //Generar camino entre ambas salas
-                Conection c = GenerateCorridorBetweenRooms(roomsToConnect[0], roomsToConnect[1]);
-
-                if (c != null)
+                if(GenerateCorridorBetweenRooms(roomsToConnect[0], roomsToConnect[1]))
                 {
-                    roomsToConnect[0].AddConection(c);
-                    roomsToConnect[1].AddConection(c);
-
-                    ApplyPathInMap(c.GetCells());
+                    ApplyPathInMap(roomsToConnect[0].GetConections()[roomsToConnect[0].GetConections().Count - 1].GetCells());
                     MarkRoomAsConected(roomsToConnect[1]);
                 }
             }
@@ -158,14 +151,9 @@ public class CorridorGenerator
             if (roomsToConnect[0].GetId() != roomsToConnect[1].GetId() && !AreRoomsConnected(roomsToConnect[0], roomsToConnect[1], false))
             {
                 //Generar camino entre las 2 salas
-                Conection c = GenerateCorridorBetweenRooms(roomsToConnect[0], roomsToConnect[1]);
-
-                if (c != null)
+                if (GenerateCorridorBetweenRooms(roomsToConnect[0], roomsToConnect[1]))
                 {
-                    roomsToConnect[0].AddConection(c);
-                    roomsToConnect[1].AddConection(c);
-
-                    ApplyPathInMap(c.GetCells());
+                    ApplyPathInMap(roomsToConnect[0].GetConections()[roomsToConnect[0].GetConections().Count - 1].GetCells());
                     MarkRoomAsConected(roomsToConnect[1]);
                 }
             }
@@ -335,7 +323,7 @@ public class CorridorGenerator
         return false;
     }
 
-    private Conection GenerateCorridorBetweenRooms(Room a, Room b)
+    private bool GenerateCorridorBetweenRooms(Room a, Room b)
     {
         //Debug.Log("CONECTAMOS LAS SALAS "+a.GetId()+" con "+b.GetId());
         int[] ChosenSides = FindSidesToConnect(a, b);
@@ -343,8 +331,9 @@ public class CorridorGenerator
         Vector2Int StartCell = GetRandomNodeFromSide(a, ChosenSides[0]);
         Vector2Int TargetCell = GetRandomNodeFromSide(b, ChosenSides[1]);
 
-        Conection c = new Conection(a, b);
-        c.SetEndPoints(StartCell, TargetCell);
+        List<Vector2Int> endPoints = new List<Vector2Int>();
+        endPoints.Add(StartCell);
+        endPoints.Add(TargetCell);
 
         Vector2Int currentNode = StartCell;
         List<Vector2Int> path = new List<Vector2Int>();
@@ -448,18 +437,17 @@ public class CorridorGenerator
             tries--;
 
             if (tries == 0)
+            {
                 Debug.Log("No hay mas TRIES que valgan");
+                return false;
+            }
+
         }
 
-        c.AddCells(path);
+        a.AddConection(new Conection(b, path, endPoints));
+        b.AddConection(new Conection(a, path, endPoints));
 
-        //Si se nos han acabado los intentos, pasamos
-        if(tries == 0)
-        {
-            return null;
-        }
-
-        return c;
+        return true;
     }
 
     private Vector2Int MoveVectorInDirection(Vector2Int c, int dir)

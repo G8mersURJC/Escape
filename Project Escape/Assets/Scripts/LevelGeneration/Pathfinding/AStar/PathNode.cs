@@ -6,24 +6,21 @@ public class PathNode
 {
 
     private Room original;
-    private Vector2Int indexPosition;   //Posición del nodo en el tablero
     private PathNode parent;            
     private float f, g, h;
 
-    public PathNode(Room original, Vector2Int pos)
+    public PathNode(Room original)
     {
         this.original = original;
-        indexPosition = pos;
 
         f = 0;
         g = 0;
         h = 0;
     }
 
-    public PathNode(Room original, Vector2Int pos, PathNode p)
+    public PathNode(Room original, PathNode p)
     {
         this.original = original;
-        indexPosition = pos;
 
         f = 0;
         g = 0;
@@ -34,28 +31,16 @@ public class PathNode
 
     public Vector2Int getIndexPosition()
     {
-        return indexPosition;
+        return original.GetIndexPosition();
     }
 
     public List<PathNode> getNeighborNodes()
     {
         List<PathNode> lista = new List<PathNode>();
 
-        for (int i = 0; i < original.GetConections().Count; i++)
+        foreach(Conection c in original.GetConections())
         {
-            if (original.GetConections()[i] == null)
-            {
-                continue;
-            }
-
-            for(int j = 0; j < original.GetConections()[i].GetRooms().Count; j++)
-            {
-                if(original.GetConections()[i].GetRooms()[j] != original)
-                {
-                    Room r = original.GetConections()[i].GetRooms()[j];
-                    lista.Add(new PathNode(r, r.GetIndexPosition(), this));
-                }
-            }
+            lista.Add(new PathNode(c.GetRoom(), this));
         }
 
         return lista;

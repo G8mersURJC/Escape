@@ -4,33 +4,36 @@ using System.Collections.Generic;
 
 public class Conection
 {
-    private List<Room> lrRooms;
+    private Room rRoom;
     private List<Vector2Int> lv2iCells;
     private List<Vector2Int> lv2iEndPoints;
 
-    public Conection(Room a, Room b)
+    public Conection(Room r)
     {
-        this.lrRooms = new List<Room>();
-        lrRooms.Add(a);
-        lrRooms.Add(b);
+        this.rRoom = r;
         this.lv2iCells = new List<Vector2Int>();
         this.lv2iEndPoints = new List<Vector2Int>();
     }
 
-    public Conection(Room a, Room b, List<Vector2Int> cells)
+    public Conection(Room r, List<Vector2Int> cells)
     {
-        this.lrRooms = new List<Room>();
-        lrRooms.Add(a);
-        lrRooms.Add(b);
+        this.rRoom = r;
         this.lv2iCells = cells;
         this.lv2iEndPoints = new List<Vector2Int>();
     }
 
+    public Conection(Room r, List<Vector2Int> cells, List<Vector2Int> endPoints)
+    {
+        this.rRoom = r;
+        this.lv2iCells = cells;
+        this.lv2iEndPoints = endPoints;
+    }
+
     public void AddCells(List<Vector2Int> pathCells)
     {
-        foreach(Vector2Int c in pathCells)
+        foreach(Vector2Int n in pathCells)
         {
-            lv2iCells.Add(c);
+            lv2iCells.Add(n);
         }
     }
 
@@ -39,9 +42,9 @@ public class Conection
         return lv2iCells;
     }
 
-    public List<Room> GetRooms()
+    public Room GetRoom()
     {
-        return lrRooms;
+        return rRoom;
     }
 
     public void SetEndPoints(Vector2Int a, Vector2Int b)
@@ -58,9 +61,9 @@ public class Conection
 
     public static bool ContainsPosition(Conection c, Vector2Int position)
     {
-        for (int i = 0; i < c.GetCells().Count; i++)
+        foreach (Vector2Int p in c.GetCells())
         {
-            if(c.GetCells()[i].x == position.x && c.GetCells()[i].y == position.y)
+            if (p.x == position.x && p.y == position.y)
             {
                 return true;
             }
@@ -71,9 +74,9 @@ public class Conection
 
     public static bool ContainsPosition(Conection c, int x, int y)
     {
-        for (int i = 0; i < c.GetCells().Count; i++)
+        foreach (Vector2Int p in c.GetCells())
         {
-            if (c.GetCells()[i].x == x && c.GetCells()[i].y == y)
+            if (p.x == x && p.y == y)
             {
                 return true;
             }
