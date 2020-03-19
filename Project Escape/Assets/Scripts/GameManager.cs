@@ -8,18 +8,17 @@ public class GameManager : MonoBehaviour
     public static GameManager manager;
     // Start is called before the first frame update
 
-    public GameObject goPlayer;
+    public GameObject goPlayerPrefab;
+    public GameObject goPlayer = null;
     public GameObject goExit;
-    
     public GameObject goMap;
+    public GameObject goCamera;
     private void Awake()
     {
         if (manager == null)
             manager = this;
         else
             Destroy(this.gameObject);
-
-
     }
     void Start()
     {
@@ -37,8 +36,9 @@ public class GameManager : MonoBehaviour
     //Instancia y posiciona al jugador
     public void SpawnPlayer(Vector2 vPos)
     {
-        GameObject go =Instantiate(goPlayer, new Vector3(vPos.x, 1.0f, vPos.y), Quaternion.identity);
-        go.GetComponent<PlayerController>().SetPos(vPos);
+        goPlayer = Instantiate(this.goPlayer, new Vector3(vPos.x, 1.0f, vPos.y), Quaternion.identity);
+        goPlayer.GetComponent<PlayerController>().SetPos(vPos);
+        goCamera.GetComponent<CameraController>().goFollowTo = goPlayer;
     }
 
     public void ExitGame()
