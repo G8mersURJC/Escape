@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public GameObject goDios;
-    public GameObject goFollowTo;
+    public GameObject goFollowTo = null;
     public float dRadious = 5f;
     public float dAngle = 60f;
 
@@ -13,9 +13,8 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
 
+    }
     // Update is called once per frame
     void Update()
     {
