@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private CellMap controlador;
     private float currentDistance;
     public float pressedTime = 0;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -22,7 +23,9 @@ public class PlayerController : MonoBehaviour
         speed = 1.0f;
         currentDistance = 0;
         controlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
-        if (!controlador) Debug.Log("No encontrado");
+        if (!controlador) Debug.Log("Mapa no encontrado");
+        animator = GetComponent<Animator>();
+        if (!animator) Debug.Log("Animator no encontrado");
         ResetPos();
     }
     // Update is called once per frame
@@ -30,6 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         if (pressedTime > 0)
         {
+            if (animator) animator.SetInteger("New Int", 0);
             pressedTime -= 0.001f;
             Debug.Log(pressedTime);
         }
@@ -45,9 +49,12 @@ public class PlayerController : MonoBehaviour
                 {
                     newDir = -1;
                 }
+                if((newDir == -1) && (animator != null)) animator.SetInteger("New Int", 0);
             }
             else if (newDir == currentDir)
             {
+                
+                if(animator!=null) animator.SetInteger("New Int", 1);
                 transform.Translate(Vector3.forward * speed * Time.deltaTime);
                 currentDistance += speed * Time.deltaTime;
                 if (currentDistance >= 1)
