@@ -4,26 +4,29 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public int posx = 0;
-    public int posy = 1;
-    public int posz = 0;
-    public float speed;
-    public int currentDir;
-    public int newDir;
-    private CellMap controlador;
-    private float currentDistance;
-    public float pressedTime = 0;
+    public int iPosx = 0;
+    public int iPosy = 1;
+    public int iPosz = 0;
+    public float fSpeed;
+    public int iCurrentDir;
+    public int iNewDir;
+    public float fTimer = 0;
+    private CellMap cmControlador;
+    private float fCurrentDistance;
+    private bool bIsAtacking = false;
+    
     Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
-        newDir = -1;
-        currentDir = 0;
-        speed = 1.0f;
-        currentDistance = 0;
-        controlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
-        if (!controlador) Debug.Log("Mapa no encontrado");
+        iNewDir = -1;
+        iCurrentDir = 0;
+        fSpeed = 1.0f;
+        fCurrentDistance = 0;
+        bIsAtacking = false;
+        cmControlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
+        if (!cmControlador) Debug.Log("Mapa no encontrado");
         animator = GetComponent<Animator>();
         if (!animator) Debug.Log("Animator no encontrado");
         ResetPos();
@@ -31,84 +34,101 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (pressedTime > 0)
+        if (!bIsAtacking && iNewDir == -1)
         {
-            if (animator) animator.SetInteger("New Int", 0);
-            pressedTime -= 0.001f;
-            Debug.Log(pressedTime);
-        }
-        else
-        {
-            if (newDir == -1)
+            if (Input.GetKey(KeyCode.E))
             {
-                if (Input.GetKey(KeyCode.W)) newDir = 0;
-                if (Input.GetKey(KeyCode.A)) newDir = 1;
-                if (Input.GetKey(KeyCode.S)) newDir = 2;
-                if (Input.GetKey(KeyCode.D)) newDir = 3;
-                if (newDir >= 0 && (newDir == currentDir) && !canMoveTo(newDir))
-                {
-                    newDir = -1;
-                }
-                if((newDir == -1) && (animator != null)) animator.SetInteger("New Int", 0);
+                bIsAtacking = true;
+                if (animator) animator.SetInteger("New Int", 2);
+                iNewDir = -1;
+                fTimer = 1.0f;
             }
-            else if (newDir == currentDir)
+        }
+
+        if (fTimer > 0)
+        {
+            if (animator && animator.GetInteger("New Int") == 1) animator.SetInteger("New Int", 0);
+            fTimer -= 1f * Time.deltaTime;
+            Debug.Log(fTimer);
+        }
+        else if (fTimer <= 0)
+        {
+            if (animator && animator.GetInteger("New Int") == 2) animator.SetInteger("New Int", 0);
+            bIsAtacking = false;
+        }
+
+        if(!bIsAtacking && fTimer <= 0)
+        {
+            if (iNewDir == -1)
             {
-                
-                if(animator!=null) animator.SetInteger("New Int", 1);
-                transform.Translate(Vector3.forward * speed * Time.deltaTime);
-                currentDistance += speed * Time.deltaTime;
-                if (currentDistance >= 1)
+                if (Input.GetKey(KeyCode.W)) iNewDir = 0;
+                if (Input.GetKey(KeyCode.A)) iNewDir = 1;
+                if (Input.GetKey(KeyCode.S)) iNewDir = 2;
+                if (Input.GetKey(KeyCode.D)) iNewDir = 3;
+                if (iNewDir >= 0 && (iNewDir == iCurrentDir) && !canMoveTo(iNewDir))
+                {
+                    iNewDir = -1;
+                }
+                if ((iNewDir == -1) && (animator != null)) animator.SetInteger("New Int", 0);
+            }
+            else if (iNewDir == iCurrentDir)
+            {
+
+                if (animator != null) animator.SetInteger("New Int", 1);
+                transform.Translate(Vector3.forward * fSpeed * Time.deltaTime);
+                fCurrentDistance += fSpeed * Time.deltaTime;
+                if (fCurrentDistance >= 1)
                 {
                     ResetPos();
                 }
             }
             else
             {
-                rotateFacing(newDir);
-                newDir = -1;
-                pressedTime = 2 * Time.deltaTime;
+                rotateFacing(iNewDir);
+                iNewDir = -1;
+                fTimer = 0.2f;
             }
         }
     }
     private bool canMoveTo(int c)
     {
-        int[,] mapa = controlador.getMap();
+        int[,] mapa = cmControlador.getMap();
         switch (c)
         {
             case 0://Arriba
-                if (posz == 0) return false;
+                if (iPosz == 0) return false;
 
-                if (mapa[posz - 1, posx] !=1 && mapa[posz - 1, posx] != 2)
+                if (mapa[iPosz - 1, iPosx] !=1 && mapa[iPosz - 1, iPosx] != 2)
                 {
-                    posz--;
+                    iPosz--;
                     return true;
                 }
                 break;
             case 1://Izquierda
-                if (posx == 0) return false;
+                if (iPosx == 0) return false;
 
-                if (mapa[posz, posx - 1] != 1 && mapa[posz, posx - 1] != 2)
+                if (mapa[iPosz, iPosx - 1] != 1 && mapa[iPosz, iPosx - 1] != 2)
                 {
-                    posx--;
+                    iPosx--;
                     return true;
                 }
                 break;
             case 2://Abajo
-                if (posz == 9) return false;
+                if (iPosz == 9) return false;
 
-                if (mapa[posz + 1, posx] != 1 && mapa[posz + 1, posx] != 2)
+                if (mapa[iPosz + 1, iPosx] != 1 && mapa[iPosz + 1, iPosx] != 2)
                 {
-                    posz++;
+                    iPosz++;
                     return true;
                 }
                 break;
 
             case 3://Derecha
-                if (posx == 9) return false;
+                if (iPosx == 9) return false;
 
-                if (mapa[posz, posx + 1] != 1 && mapa[posz, posx + 1] != 2)
+                if (mapa[iPosz, iPosx + 1] != 1 && mapa[iPosz, iPosx + 1] != 2)
                 {
-                    posx++;
+                    iPosx++;
                     return true;
                 }
                 break;
@@ -117,7 +137,7 @@ public class PlayerController : MonoBehaviour
     }
     private bool rotateFacing(int newDir)
     {
-        if (newDir != currentDir)
+        if (newDir != iCurrentDir)
         {
             switch (newDir)
             {
@@ -134,24 +154,24 @@ public class PlayerController : MonoBehaviour
                     this.transform.rotation = Quaternion.Euler(0, 90, 0);
                     break;
             }
-            currentDir = newDir;
+            iCurrentDir = newDir;
         }
         return false;
     }
 
     public void SetPos(Vector2 vPos)
     {
-        posx = (int)vPos.x;
-        posz = (int)vPos.y;
+        iPosx = (int)vPos.x;
+        iPosz = (int)vPos.y;
     }
 
     void ResetPos()
     {
         //Centra el movimiendo a la casilla.
-        transform.position = new Vector3(posx - controlador.posz, posy, controlador.posx - posz);
-        newDir = -1;
-        currentDistance = 0;
-        Debug.Log("Estoy en: " + posx + " " + posz);
+        transform.position = new Vector3(iPosx - cmControlador.posz, iPosy, cmControlador.posx - iPosz);
+        iNewDir = -1;
+        fCurrentDistance = 0;
+        Debug.Log("Estoy en: " + iPosx + " " + iPosz);
     }
     private void OnCollisionEnter(Collision collision)
     {
