@@ -1005,9 +1005,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ce8b10726ece894bb9a62eae8ba9674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 8521628521518504900, guid: 5d3da7bf8169979408bbcf9e5af73e87, type: 3}
-  posx: 0
-  posz: 0
+  goEnemies:
+  - {fileID: 1611735680423302895, guid: e0bb15eca8bd26b49a32071a73927b34, type: 3}
+  - {fileID: 2886005294136213448, guid: 81c33fd7e7651ce439bc0261d6d41911, type: 3}
+  fTimeBetweenSpawns: 1
 --- !u!4 &2020940823
 Transform:
   m_ObjectHideFlags: 0
