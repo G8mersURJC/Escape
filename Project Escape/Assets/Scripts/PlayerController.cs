@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,7 +12,8 @@ public class PlayerController : MonoBehaviour
     public int currentDir;
     public int newDir;
     private CellMap controlador;
-    private float currentDistance; 
+    private float currentDistance;
+
     // Start is called before the first frame update
     void Start()
     {
