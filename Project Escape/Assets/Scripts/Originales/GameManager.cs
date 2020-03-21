@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     public GameObject goExit;
     
     public GameObject goMap;
+
+    RankingManager rManager;
     private void Awake()
     {
         if (manager == null)
@@ -23,6 +25,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        rManager.LoadRankings();
     }
 
     // Update is called once per frame
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
 
     public void ExitGame()
     {
+        rManager.SaveRankings();
         Application.Quit();
     }
 
