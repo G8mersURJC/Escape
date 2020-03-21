@@ -16,4 +16,10 @@ public class EnemyController : MonoBehaviour
     {
         
     }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+            GetComponent<Animator>().Play("Punching");
+    }
 }

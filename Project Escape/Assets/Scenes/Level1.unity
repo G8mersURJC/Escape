@@ -194,7 +194,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 151701093}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -50}
+  m_LocalPosition: {x: 0, y: 0.495, z: -50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -233,6 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   goPlayer: {fileID: 1141077676778048565, guid: 05b54aea14a1c24459c636cdf4d4d3f0,
     type: 3}
+  goEnemy: {fileID: 4451576214938915499, guid: 0ab00921c544c5249a98c2115062dcce, type: 3}
   goExit: {fileID: 1661906027}
   goMap: {fileID: 1441199192}
   ifPlayerName: {fileID: 443206543}
@@ -491,6 +492,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -659,6 +661,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d67c118985fd548458232cbf35aaf152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dRadious: 9
+  dAngle: 60
 --- !u!1 &1277586616 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4423495024532420380, guid: 182eaa9a0b922104ab2d311628cab9f0,

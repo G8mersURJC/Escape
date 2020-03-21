@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
 
     public GameObject goPlayer;
+    public GameObject goEnemy;
     public GameObject goExit;
     public GameObject goMap;
     public InputField ifPlayerName;
@@ -20,7 +21,7 @@ public class GameManager : MonoBehaviour
     public bool bPlay;
 
     public Actor player = new Actor();
-    public Actor[] enemies;
+    public List<Actor> enemies;
 
     LifeHUDController HudController;
 
@@ -56,11 +57,22 @@ public class GameManager : MonoBehaviour
     public void SpawnPlayer(Vector2 vPos)
     {
         player.SetActor(goPlayer);
+        player.GetActor().tag = "Player";
         player.SetType(0);
         player.SetLife(6);
         HudController.SetMaxHearts(3);
-        GameObject go =Instantiate(player.GetActor(), new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity);
-        go.GetComponent<PlayerController>().SetPos(vPos);
+        player.SetActor(Instantiate(goPlayer, new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity));
+        player.GetActor().GetComponent<PlayerController>().SetPos(vPos);
+    }
+    public void SpawnEnemy(Vector2 vPos)
+    {
+        Actor enem = new Actor();
+        enem.SetActor(goEnemy);
+        enem.SetType(ActorType.acEnemy);
+        enem.SetLife(1);
+        enem.SetActor(Instantiate(goEnemy, new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity));
+        enemies.Add(enem);
+      
     }
 
     public void ExitGame()

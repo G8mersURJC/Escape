@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject goDios;
-    public GameObject goFollowTo = null;
     public float dRadious = 5f;
     public float dAngle = 60f;
 
@@ -19,7 +17,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         //Situa la cámara en el personaje.
-        transform.position = new Vector3(goFollowTo.GetComponent<Transform>().position.x, goFollowTo.GetComponent<Transform>().position.y, goFollowTo.GetComponent<Transform>().position.z);
+        transform.position = new Vector3(GameManager.manager.player.GetActor().GetComponent<Transform>().position.x, GameManager.manager.player.GetActor().GetComponent<Transform>().position.y, GameManager.manager.player.GetActor().GetComponent<Transform>().position.z);
         //Realiza la rotación.
         transform.rotation = Quaternion.Euler(dAngle, 0, 0);
         //Se desplaza con el radio indicado acorde a la rotación aplicada.
