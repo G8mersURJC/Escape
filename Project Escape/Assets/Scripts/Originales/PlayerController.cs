@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     public int iCurrentDir;
     public int iNewDir;
     public float fTimer = 0;
-    private CellMap cmControlador;
+    private CellMapV2 cmControlador;
     private float fCurrentDistance;
     private bool bIsAtacking = false;
     
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         fSpeed = 1.0f;
         fCurrentDistance = 0;
         bIsAtacking = false;
-        cmControlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMap)) as CellMap;
+        cmControlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMapV2)) as CellMapV2;
         if (!cmControlador) Debug.Log("Mapa no encontrado");
         animator = GetComponent<Animator>();
         if (!animator) Debug.Log("Animator no encontrado");
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
         {
             if (animator && animator.GetInteger("New Int") == 1) animator.SetInteger("New Int", 0);
             fTimer -= 1f * Time.deltaTime;
-            Debug.Log(fTimer);
+            //Debug.Log(fTimer);
         }
         else if (fTimer <= 0)
         {
@@ -98,8 +98,9 @@ public class PlayerController : MonoBehaviour
             case 0://Arriba
                 if (iPosz == 0) return false;
 
-                if (mapa[iPosz - 1, iPosx] !=1 && mapa[iPosz - 1, iPosx] != 2)
+                if (mapa[iPosz - 1, iPosx] !=1 && mapa[iPosz - 1, iPosx] != 2 && mapa[iPosz - 1, iPosx] != 9)
                 {
+                    Debug.Log("Me muevo a " + mapa[iPosz - 1, iPosx]);
                     iPosz--;
                     return true;
                 }
@@ -107,27 +108,30 @@ public class PlayerController : MonoBehaviour
             case 1://Izquierda
                 if (iPosx == 0) return false;
 
-                if (mapa[iPosz, iPosx - 1] != 1 && mapa[iPosz, iPosx - 1] != 2)
+                if (mapa[iPosz, iPosx - 1] != 1 && mapa[iPosz, iPosx - 1] != 2 && mapa[iPosz, iPosx - 1] != 9)
                 {
+                    Debug.Log("Me muevo a " + mapa[iPosz - 1, iPosx]);
                     iPosx--;
                     return true;
                 }
                 break;
             case 2://Abajo
-                if (iPosz == 9) return false;
+                if (iPosz == mapa.GetLength(0) - 1) return false;
 
-                if (mapa[iPosz + 1, iPosx] != 1 && mapa[iPosz + 1, iPosx] != 2)
+                if (mapa[iPosz + 1, iPosx] != 1 && mapa[iPosz + 1, iPosx] != 2 && mapa[iPosz + 1, iPosx] != 9)
                 {
+                    Debug.Log("Me muevo a "+ mapa[iPosz - 1, iPosx]);
                     iPosz++;
                     return true;
                 }
                 break;
 
             case 3://Derecha
-                if (iPosx == 9) return false;
+                if (iPosx == mapa.GetLength(1) - 1) return false;
 
-                if (mapa[iPosz, iPosx + 1] != 1 && mapa[iPosz, iPosx + 1] != 2)
+                if (mapa[iPosz, iPosx + 1] != 1 && mapa[iPosz, iPosx + 1] != 2 && mapa[iPosz, iPosx + 1] != 9)
                 {
+                    Debug.Log("Me muevo a " + mapa[iPosz, iPosx + 1]);
                     iPosx++;
                     return true;
                 }

@@ -85,7 +85,7 @@ public class CellV2 : MonoBehaviour
     public void SetModel(GameObject prefab)
     {
         obj = Instantiate(prefab, new Vector3(vPos.x, 0, vPos.y), Quaternion.identity);
-        //obj.transform.SetParent(GameObject.Find("Map").transform);
+        obj.transform.SetParent(GameObject.Find("Map1").transform);
        
 
         //rend = obj.GetComponent<Renderer>();

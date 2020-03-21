@@ -17,10 +17,6 @@ public class CellMapV2 : MonoBehaviour
 
     public void SetupMap()
     {
-
-
-
-
         //PrintArray();
 
         cells = new CellV2[coordinates.GetLength(0), coordinates.GetLength(1)];
@@ -48,14 +44,14 @@ public class CellMapV2 : MonoBehaviour
                 }
                 
             }
-            GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
+            
         }
+
+        GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
     }
 
     public void LoadMap()
     {
-    
-
         StreamReader reader = new StreamReader("Assets/data/map0.txt");
         for(int i=0; i<50;i++)
         {
@@ -66,5 +62,10 @@ public class CellMapV2 : MonoBehaviour
             }
         }
         coordinates = map;
+    }
+
+    public int[,] getMap()
+    {
+        return coordinates;
     }
 }
