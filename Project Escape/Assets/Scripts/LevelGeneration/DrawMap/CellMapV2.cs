@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class CellMapV2 : MonoBehaviour
@@ -12,10 +13,13 @@ public class CellMapV2 : MonoBehaviour
     public int iSizeX, iSizeY;
     public GameObject[] goModelList;
     private Vector2 vPlayerSpawn, vExit;
+    int[,] map = new int[50,50];
 
-    public void SetupMap(int [,] map)
+    public void SetupMap()
     {
-        coordinates = map;
+
+
+
 
         //PrintArray();
 
@@ -33,18 +37,34 @@ public class CellMapV2 : MonoBehaviour
                 if (coordinates[i, j] == 3)
                 {
 
-                    //vPlayerSpawn.x = j;
-                    //vPlayerSpawn.y = i;
+                    vPlayerSpawn.x = j;
+                    vPlayerSpawn.y = i;
                 }
 
-                if(coordinates[i, j] != -1)
+                if(coordinates[i, j] != 9)
                 {
                     cells[i, j].SetModel(goModelList[coordinates[i, j]]);
                     //cells[i, j].SetBehaviour();
                 }
+                
+            }
+            GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
+        }
+    }
 
+    public void LoadMap()
+    {
+    
 
+        StreamReader reader = new StreamReader("Assets/data/map0.txt");
+        for(int i=0; i<50;i++)
+        {
+            string sLine = reader.ReadLine();
+            for(int j=0; j<50; j++)
+            {
+                map[i, j] = int.Parse(sLine[j].ToString());
             }
         }
+        coordinates = map;
     }
 }

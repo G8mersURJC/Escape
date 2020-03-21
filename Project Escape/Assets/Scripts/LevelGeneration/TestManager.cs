@@ -37,7 +37,7 @@ public class TestManager : MonoBehaviour
 
             //Generamos un mapa nuevo
             lg = new LevelGenerator();
-            cm.SetupMap(lg.GenerateMap(mapSize, roomNumber, minRoomSize, maxRoomSize));
+            //cm.SetupMap(lg.GenerateMap(mapSize, roomNumber, minRoomSize, maxRoomSize));
 
             generating = false;
         }

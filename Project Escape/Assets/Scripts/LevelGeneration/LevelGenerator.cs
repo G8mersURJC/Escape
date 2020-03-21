@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class LevelGenerator
@@ -42,6 +43,18 @@ public class LevelGenerator
 
         map = op.PlaceElementsInMap(map, llRooms);
 
+        StreamWriter writer = new StreamWriter("Assets/Data/Map1.txt");
+        for(int i=0; i< size; i++)
+        {
+            for(int j=0; j< size; j++)
+            {
+                writer.Write(map[i, j]);
+            }
+            writer.Write("\n");
+
+        }
+
+        writer.Close();
         return map;
     }
 

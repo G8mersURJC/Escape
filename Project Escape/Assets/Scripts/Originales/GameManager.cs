@@ -15,16 +15,16 @@ public class GameManager : MonoBehaviour
     public InputField ifPlayerName;
     public GameObject goHTP;
 
-
     RankingManager rManager = new RankingManager();
-    
-
+   
     public bool bPlay;
 
     public Actor player = new Actor();
     public Actor[] enemies;
 
     LifeHUDController HudController;
+
+    int iActiveLvl;
     private void Awake()
     {
         if (manager == null)
@@ -39,8 +39,10 @@ public class GameManager : MonoBehaviour
     {
        
         rManager.LoadRankings();
+        iActiveLvl = 0;
         HudController.InitLHC();
-        goMap.GetComponent<CellMap>().LoadMap();
+        goMap.GetComponent<CellMapV2>().LoadMap();
+        goMap.GetComponent<CellMapV2>().SetupMap();
     }
 
     // Update is called once per frame
