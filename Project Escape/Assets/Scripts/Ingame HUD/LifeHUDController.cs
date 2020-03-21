@@ -7,13 +7,13 @@ public class LifeHUDController : MonoBehaviour
 {
     public GameObject goHearth, goHearthPanel;
     public Sprite sFullHearth, sHalfHearth, sEmptyHearth;
-    public Vector3 v3HearthOffset;
+    private Vector3 v3HearthOffset;
 
-    private int iCurrentMaxHealth = 6;
-    private int iCurrentHealth;  //2 "toques" por corazón
-    private int iMaxHealth = 10; //10 "toques" con 5 corazones
+    private int iCurrentMaxHealth = 2;  //2 "toques" por corazón
+    private int iCurrentHealth;  
+    private int iMaxHealth = 20; //20 "toques" con 10 corazones
 
-    public List<GameObject> lHearths;
+    private List<GameObject> lHearths;
 
     // Start is called before the first frame update
     void Start()

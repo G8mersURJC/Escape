@@ -16,7 +16,7 @@ public class HUDTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        lifeController = GameObject.Find("Main Camera").GetComponent<LifeHUDController>();
+        lifeController = this.GetComponent<LifeHUDController>();
     }
 
     public void StartButtonPressed()
