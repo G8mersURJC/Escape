@@ -15,9 +15,17 @@ public class LifeHUDController : MonoBehaviour
 
     private List<GameObject> lHearths;
 
-    
+    private void Awake()
+    {
+        
+    }
     // Start is called before the first frame update
     void Start()
+    {
+        
+    }
+
+    public void InitLHC()
     {
         iCurrentHealth = iCurrentMaxHealth;
 

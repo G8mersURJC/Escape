@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     {
        
         rManager.LoadRankings();
+        HudController.InitLHC();
+        goMap.GetComponent<CellMap>().LoadMap();
     }
 
     // Update is called once per frame
@@ -55,7 +57,7 @@ public class GameManager : MonoBehaviour
         player.SetType(0);
         player.SetLife(6);
         HudController.SetMaxHearts(3);
-        GameObject go =Instantiate(player.GetActor(), new Vector3(vPos.x, 1.0f, vPos.y), Quaternion.identity);
+        GameObject go =Instantiate(player.GetActor(), new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity);
         go.GetComponent<PlayerController>().SetPos(vPos);
     }
 

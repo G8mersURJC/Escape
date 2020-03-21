@@ -18,9 +18,14 @@ public class CellMap : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cells = new Cell[iSizeX, iSizeY];
-       
         
+    }
+
+    public void LoadMap()
+    {
+        cells = new Cell[iSizeX, iSizeY];
+
+
         /*
             0 -> Empty cell
             1 -> Cannot pass cell
@@ -28,7 +33,7 @@ public class CellMap : MonoBehaviour
             3 -> Start
             4 -> End
         */
-        
+
         //Suelo lógico
         posx = 4.5f;
         posz = 4.5f;
@@ -44,10 +49,10 @@ public class CellMap : MonoBehaviour
             {0, 3, 0, 0, 1, 0, 1, 1, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         };
-       
+
 
         //Establece el suelo para todos
-    
+
         for (int i = 0; i < coordinates.GetLength(0); i++)
         {
             for (int j = 0; j < coordinates.GetLength(1); j++)
@@ -55,20 +60,20 @@ public class CellMap : MonoBehaviour
                 cells[i, j] = new Cell();
                 cells[i, j].SetCellCode(coordinates[i, j]);
                 cells[i, j].SetPos(new Vector2(j - posz, posx - i));
-               
-                if(coordinates[i,j] == 3)
+
+                if (coordinates[i, j] == 3)
                 {
-                   
+
                     vPlayerSpawn.x = j;
                     vPlayerSpawn.y = i;
                 }
-               
+
                 cells[i, j].SetModel(goModelList[coordinates[i, j]]);
                 cells[i, j].SetBehaviour();
 
             }
         }
-        GameManager.manager.SpawnPlayer(vPlayerSpawn);
+        GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
     }
 
     // Update is called once per frame

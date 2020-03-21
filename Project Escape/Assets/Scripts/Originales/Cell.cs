@@ -8,13 +8,14 @@ public class Cell : MonoBehaviour
     GameObject asset;
     Vector2 vPos;
     Vector2 vCenter;
-    float fSize = 1;
+    float fSize;
     int iCellCode;
 
     Renderer rend;
 
     private void Awake()
     {
+        fSize = 1;
         rend = obj.GetComponent<Renderer>();
     }
     // Start is called before the first frame update

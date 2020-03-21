@@ -34,16 +34,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-<<<<<<< HEAD:Project Escape/Assets/Scripts/Originales/PlayerController.cs
-        if (GameManager.manager.bPlay)
-            if (newDir == -1)
-            {
-                if (Input.GetKey(KeyCode.W)) newDir = 0;
-                if (Input.GetKey(KeyCode.A)) newDir = 1;
-                if (Input.GetKey(KeyCode.S)) newDir = 2;
-                if (Input.GetKey(KeyCode.D)) newDir = 3;
-                if (newDir >= 0 && !canMoveTo(newDir)) newDir = -1;
-=======
         if (!bIsAtacking && iNewDir == -1)
         {
             if (Input.GetKey(KeyCode.E))
@@ -97,19 +87,8 @@ public class PlayerController : MonoBehaviour
                 rotateFacing(iNewDir);
                 iNewDir = -1;
                 fTimer = 0.2f;
->>>>>>> Ivan-Branch:Project Escape/Assets/Scripts/PlayerController.cs
             }
-            else
-            {
-                rotateFacing(newDir);
-                transform.Translate(Vector3.forward * speed * Time.deltaTime);
-                currentDistance += speed * Time.deltaTime;
-                if (currentDistance >= 1)
-                {
-                    ResetPos();
-                }
-            }
-    
+        }
     }
     private bool canMoveTo(int c)
     {
@@ -189,7 +168,7 @@ public class PlayerController : MonoBehaviour
     void ResetPos()
     {
         //Centra el movimiendo a la casilla.
-        transform.position = new Vector3(iPosx - cmControlador.posz, iPosy, cmControlador.posx - iPosz);
+        transform.position = new Vector3(iPosx - cmControlador.posz, iPosy -0.5f, cmControlador.posx - iPosz);
         iNewDir = -1;
         fCurrentDistance = 0;
         Debug.Log("Estoy en: " + iPosx + " " + iPosz);
