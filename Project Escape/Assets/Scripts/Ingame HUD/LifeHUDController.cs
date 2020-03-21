@@ -15,6 +15,7 @@ public class LifeHUDController : MonoBehaviour
 
     private List<GameObject> lHearths;
 
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -101,6 +102,19 @@ public class LifeHUDController : MonoBehaviour
 
             count += 2;
         }
+    }
+
+    public void SetMaxHearts( int iNewHealth) //Corazones
+    {
+
+        int dif = iNewHealth - (iCurrentMaxHealth/2);
+        for (int i = 0; i < dif; i++)
+            ExpandMaxHealth();
+    }
+
+    public void SetCurHearts(int i)
+    {
+        iCurrentHealth = i;
     }
 
     

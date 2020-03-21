@@ -26,23 +26,26 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (newDir==-1) {
-            if (Input.GetKey(KeyCode.W)) newDir = 0;
-            if (Input.GetKey(KeyCode.A)) newDir = 1;
-            if (Input.GetKey(KeyCode.S)) newDir = 2;
-            if (Input.GetKey(KeyCode.D)) newDir = 3;
-            if (newDir>=0&&!canMoveTo(newDir)) newDir = -1;
-        }
-        else
-        {
-            rotateFacing(newDir);
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
-            currentDistance += speed * Time.deltaTime;
-            if (currentDistance >= 1)
+        if (GameManager.manager.bPlay)
+            if (newDir == -1)
             {
-                ResetPos();
+                if (Input.GetKey(KeyCode.W)) newDir = 0;
+                if (Input.GetKey(KeyCode.A)) newDir = 1;
+                if (Input.GetKey(KeyCode.S)) newDir = 2;
+                if (Input.GetKey(KeyCode.D)) newDir = 3;
+                if (newDir >= 0 && !canMoveTo(newDir)) newDir = -1;
             }
-        }
+            else
+            {
+                rotateFacing(newDir);
+                transform.Translate(Vector3.forward * speed * Time.deltaTime);
+                currentDistance += speed * Time.deltaTime;
+                if (currentDistance >= 1)
+                {
+                    ResetPos();
+                }
+            }
+    
     }
     private bool canMoveTo(int c)
     {

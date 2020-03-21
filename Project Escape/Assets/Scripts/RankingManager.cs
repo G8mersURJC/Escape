@@ -93,7 +93,7 @@ public class RankingManager
         for (int j = 0; j < 9; j++)
             for (int k = 0; k < 9; k++)
             {
-                if (playerData[k].iPoints > playerData[k + 1].iPoints)
+                if (playerData[k].iPoints < playerData[k + 1].iPoints)
                 {
                     PlayerData swap = playerData[k];
                     playerData[k] = playerData[k + 1];
