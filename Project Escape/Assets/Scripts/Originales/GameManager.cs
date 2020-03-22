@@ -14,11 +14,12 @@ public class GameManager : MonoBehaviour
     public GameObject goExit;
     public GameObject goMap;
     public InputField ifPlayerName;
-    public GameObject goHTP, goLore;
+    public GameObject goHTP, goLore, goGameOver;
+    public bool bGameOver = false;
 
     RankingManager rManager = new RankingManager();
-   
-    public bool bPlay;
+
+    public bool bPlay = false;
 
     public Actor player = new Actor();
 
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     private List<MapData> mapList;       //Lista de todos los mapas en escena
     private int iActiveMap;
+    private int iMaxMaps = 0;
 
     private void Awake()
     {
@@ -50,11 +52,14 @@ public class GameManager : MonoBehaviour
         goMap.GetComponent<CellMapV2>().LoadMap(0);
         goMap.GetComponent<CellMapV2>().SetupMap();
         mapList.Add(goMap.GetComponent<CellMapV2>().GetCurrentMapData());
+        iMaxMaps++;
 
         goMap.GetComponent<CellMapV2>().LoadMap(1);
         goMap.GetComponent<CellMapV2>().SetupMap();
         mapList.Add(goMap.GetComponent<CellMapV2>().GetCurrentMapData());
 
+       
+        iMaxMaps++;
         iActiveMap = 0;
 
         SpawnPlayer(mapList[iActiveMap].GetMapStart());
@@ -70,12 +75,15 @@ public class GameManager : MonoBehaviour
     //Instancia y posiciona al jugador
     public void SpawnPlayer(Vector2Int vPos)
     {
-        player.SetActor(goPlayer);
-        player.GetActor().tag = "Player";
-        player.SetType(0);
-        player.SetLife(6);
-        HudController.SetMaxHearts(3);
-        player.SetActor(Instantiate(goPlayer, new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity));
+        if (!player.GetActor())
+        {
+            player.SetActor(goPlayer);
+            player.GetActor().tag = "Player";
+            player.SetType(0);
+            player.SetLife(6);
+            HudController.SetMaxHearts(3);
+            player.SetActor(Instantiate(goPlayer, new Vector3(vPos.x, 0.5f, vPos.y), Quaternion.identity));
+        }
         player.GetActor().GetComponent<PlayerController>().SetIndexPos(vPos);
 
         player.GetActor().transform.SetParent(GameObject.Find("Map" + iActiveMap + "/MapEnemies").transform);
@@ -135,16 +143,24 @@ public class GameManager : MonoBehaviour
 
     public void ResetGame(float fSecs)
     {
-        
+        if(bGameOver)
+        {
+            bGameOver = false;
+            goGameOver.SetActive(true);
+        }
         rManager.AddRanking(player.GetName(), player.GetPoints());
         rManager.SaveRankings();
-        StartCoroutine(DelayedLoading(3, "Inicial"));
+        StartCoroutine(DelayedLoading(3, "MainMenuV2"));
         
     }
 
     public void LaunchGame()
     {
         SceneManager.LoadScene("Level1");
+    }
+    public void LaunchGame(string s1)
+    {
+        SceneManager.LoadScene(s1);
     }
 
     public void StartGameLvl1()
@@ -164,6 +180,7 @@ public class GameManager : MonoBehaviour
     IEnumerator DelayedLoading(float fSecs, string sScene)
     {
         yield return new WaitForSeconds(fSecs);
+        goGameOver.SetActive(false);
         SceneManager.LoadScene(sScene);
     }
 
@@ -189,7 +206,6 @@ public class GameManager : MonoBehaviour
         {
             //Reducimos la salud del enemigo
             enemy.Damage(damage);
-            enemy.CheckDeath();
         }
     }
 
@@ -218,5 +234,18 @@ public class GameManager : MonoBehaviour
     public void CloseLore()
     {
         goLore.SetActive(false);
+    }
+
+    public void SwitchMap()
+    {
+        if (iActiveMap >= iMaxMaps - 1)
+        {
+            iActiveMap = 0;
+            ExitGame();
+        }
+        else
+            iActiveMap++;
+
+        SpawnPlayer(mapList[iActiveMap].GetMapStart());
     }
 }

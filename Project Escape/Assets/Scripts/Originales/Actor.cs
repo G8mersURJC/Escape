@@ -71,6 +71,7 @@ public class Actor
     {
         iLife -= iDmg;
         GameManager.manager.HudController.ModifyHealthByAmount(iDmg * -1);
+        CheckDeath();
         return iLife;
     }
     public int Heal(int iHP)
@@ -88,6 +89,7 @@ public class Actor
             switch (type)
             {
                 case ActorType.acPlayer:
+                    GameManager.manager.bGameOver = true;
                     GameManager.manager.ResetGame(3);
                     break;
                 case ActorType.acEnemy:

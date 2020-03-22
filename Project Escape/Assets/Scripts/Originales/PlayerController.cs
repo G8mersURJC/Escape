@@ -60,69 +60,72 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!bIsAtacking && iNewDir == -1)
+        if (GameManager.manager.bPlay)
         {
-            if (Input.GetKey(KeyCode.E))
+            if (!bIsAtacking && iNewDir == -1)
             {
-                bIsAtacking = true;
-                if (animator) animator.SetInteger("New Int", 2);
-                iNewDir = -1;
-                fTimer = 1.0f;
-
-                //Procesar ataque
-                ProcessAtack();
-            }
-        }
-
-        if (fTimer > 0)
-        {
-            if (animator && animator.GetInteger("New Int") == 1) animator.SetInteger("New Int", 0);
-            fTimer -= 1f * Time.deltaTime;
-            //Debug.Log(fTimer);
-        }
-        else if (fTimer < 0)
-        {
-            fTimer = 0;
-
-            if (animator && animator.GetInteger("New Int") == 2) animator.SetInteger("New Int", 0);
-            bIsAtacking = false;
-
-        }
-
-        if(!bIsAtacking && fTimer <= 0)
-        {
-            if (iNewDir == -1)
-            {
-                if (Input.GetKey(KeyCode.W)) iNewDir = 0;
-                if (Input.GetKey(KeyCode.A)) iNewDir = 1;
-                if (Input.GetKey(KeyCode.S)) iNewDir = 2;
-                if (Input.GetKey(KeyCode.D)) iNewDir = 3;
-                if (iNewDir >= 0 && (iNewDir == iCurrentDir) && !CanMoveTo(iNewDir))
+                if (Input.GetKey(KeyCode.E))
                 {
+                    bIsAtacking = true;
+                    if (animator) animator.SetInteger("New Int", 2);
                     iNewDir = -1;
-                }
-                if ((iNewDir == -1) && (animator != null)) animator.SetInteger("New Int", 0);
-            }
-            else if (iNewDir == iCurrentDir)
-            {
+                    fTimer = 1.0f;
 
-                if (animator != null) animator.SetInteger("New Int", 1);
-                transform.Translate(Vector3.forward * fSpeed * Time.deltaTime);
-                fCurrentDistance += fSpeed * Time.deltaTime;
-                if (fCurrentDistance >= 1)
+                    //Procesar ataque
+                    ProcessAtack();
+                }
+            }
+
+            if (fTimer > 0)
+            {
+                if (animator && animator.GetInteger("New Int") == 1) animator.SetInteger("New Int", 0);
+                fTimer -= 1f * Time.deltaTime;
+                //Debug.Log(fTimer);
+            }
+            else if (fTimer < 0)
+            {
+                fTimer = 0;
+
+                if (animator && animator.GetInteger("New Int") == 2) animator.SetInteger("New Int", 0);
+                bIsAtacking = false;
+
+            }
+
+            if (!bIsAtacking && fTimer <= 0)
+            {
+                if (iNewDir == -1)
                 {
-                    ResetPos();
-                    //Hemos terminado de movernos, le toca a los enemigos
-                    GameManager.manager.ProcessEnemyTurn();
-
-                    //Debug.Log("TURN ENDO!");
+                    if (Input.GetKey(KeyCode.W)) iNewDir = 0;
+                    if (Input.GetKey(KeyCode.A)) iNewDir = 1;
+                    if (Input.GetKey(KeyCode.S)) iNewDir = 2;
+                    if (Input.GetKey(KeyCode.D)) iNewDir = 3;
+                    if (iNewDir >= 0 && (iNewDir == iCurrentDir) && !CanMoveTo(iNewDir))
+                    {
+                        iNewDir = -1;
+                    }
+                    if ((iNewDir == -1) && (animator != null)) animator.SetInteger("New Int", 0);
                 }
-            }
-            else
-            {
-                rotateFacing(iNewDir);
-                iNewDir = -1;
-                fTimer = 0.2f;
+                else if (iNewDir == iCurrentDir)
+                {
+
+                    if (animator != null) animator.SetInteger("New Int", 1);
+                    transform.Translate(Vector3.forward * fSpeed * Time.deltaTime);
+                    fCurrentDistance += fSpeed * Time.deltaTime;
+                    if (fCurrentDistance >= 1)
+                    {
+                        ResetPos();
+                        //Hemos terminado de movernos, le toca a los enemigos
+                        GameManager.manager.ProcessEnemyTurn();
+
+                        //Debug.Log("TURN ENDO!");
+                    }
+                }
+                else
+                {
+                    rotateFacing(iNewDir);
+                    iNewDir = -1;
+                    fTimer = 0.2f;
+                }
             }
         }
     }
@@ -219,9 +222,11 @@ public class PlayerController : MonoBehaviour
         return new Vector2(iPosx, iPosz);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == "Goal")
-            GameManager.manager.ExitGame();
+        if (other.gameObject.tag == "Goal")
+            GameManager.manager.SwitchMap();
     }
+
 }
+    

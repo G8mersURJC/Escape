@@ -23,6 +23,11 @@ public class KeyBinds : MonoBehaviour
             int p = GameManager.manager.player.AddPoints(1);
             Debug.Log("Player points: " + p);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            GameManager.manager.SwitchMap();
+            Debug.Log("Warping");
+        }
 
     }
 }
