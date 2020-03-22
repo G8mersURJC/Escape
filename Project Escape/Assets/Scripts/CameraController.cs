@@ -16,11 +16,16 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Situa la cámara en el personaje.
-        transform.position = new Vector3(GameManager.manager.player.GetActor().GetComponent<Transform>().position.x, GameManager.manager.player.GetActor().GetComponent<Transform>().position.y, GameManager.manager.player.GetActor().GetComponent<Transform>().position.z);
-        //Realiza la rotación.
-        transform.rotation = Quaternion.Euler(dAngle, 0, 0);
-        //Se desplaza con el radio indicado acorde a la rotación aplicada.
-        transform.Translate(-Vector3.forward * dRadious);
+        if (GameManager.manager.player.GetActor())
+        {
+            //Situa la cámara en el personaje.
+            transform.position = new Vector3(GameManager.manager.player.GetActor().GetComponent<Transform>().position.x, GameManager.manager.player.GetActor().GetComponent<Transform>().position.y, GameManager.manager.player.GetActor().GetComponent<Transform>().position.z);
+            //Realiza la rotación.
+            transform.rotation = Quaternion.Euler(dAngle, 0, 0);
+            //Se desplaza con el radio indicado acorde a la rotación aplicada.
+            transform.Translate(-Vector3.forward * dRadious);
+        }
+
+       
     }
 }

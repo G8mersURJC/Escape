@@ -82,11 +82,12 @@ public class CellV2 : MonoBehaviour
         }
     }
     */
-    public void SetModel(GameObject prefab)
+    public void SetModel(GameObject prefab, int mapId)
     {
         obj = Instantiate(prefab, new Vector3(vPos.x, 0, vPos.y), Quaternion.identity);
-        obj.transform.SetParent(GameObject.Find("Map1").transform);
-       
+        obj.transform.SetParent(GameObject.Find("Map"+mapId+"/MapCells").transform);
+
+        obj.transform.localPosition = new Vector3(vPos.x, 0 , vPos.y);
 
         //rend = obj.GetComponent<Renderer>();
     }

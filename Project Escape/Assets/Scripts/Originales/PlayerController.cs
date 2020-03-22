@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     {
         iNewDir = -1;
         iCurrentDir = 0;
-        fSpeed = 1.0f;
+        fSpeed = 3.0f;
         fCurrentDistance = 0;
         bIsAtacking = false;
         cmControlador = GameObject.Find("CellContainer").GetComponent(typeof(CellMapV2)) as CellMapV2;
@@ -31,6 +31,32 @@ public class PlayerController : MonoBehaviour
         if (!animator) Debug.Log("Animator no encontrado");
         ResetPos();
     }
+
+    private void ProcessAtack()
+    {
+        //Hay que mirar si en la casilla que estamos mirando hay un enemigo
+        switch (iCurrentDir)
+        {
+            case 0:
+                GameManager.manager.AttackInCell(new Vector2Int(iPosx, iPosz - 1), 1);
+                break;
+            case 1:
+                GameManager.manager.AttackInCell(new Vector2Int(iPosx - 1, iPosz), 1);
+                break;
+            case 2:
+                GameManager.manager.AttackInCell(new Vector2Int(iPosx, iPosz + 1), 1);
+                break;
+            case 3:
+                GameManager.manager.AttackInCell(new Vector2Int(iPosx + 1, iPosz), 1);
+                break;
+        }
+
+        //Hemos atacado, le toca a los enemigos
+        GameManager.manager.ProcessEnemyTurn();
+
+        //Debug.Log("TURN ENDO!");
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -42,6 +68,9 @@ public class PlayerController : MonoBehaviour
                 if (animator) animator.SetInteger("New Int", 2);
                 iNewDir = -1;
                 fTimer = 1.0f;
+
+                //Procesar ataque
+                ProcessAtack();
             }
         }
 
@@ -51,10 +80,13 @@ public class PlayerController : MonoBehaviour
             fTimer -= 1f * Time.deltaTime;
             //Debug.Log(fTimer);
         }
-        else if (fTimer <= 0)
+        else if (fTimer < 0)
         {
+            fTimer = 0;
+
             if (animator && animator.GetInteger("New Int") == 2) animator.SetInteger("New Int", 0);
             bIsAtacking = false;
+
         }
 
         if(!bIsAtacking && fTimer <= 0)
@@ -65,7 +97,7 @@ public class PlayerController : MonoBehaviour
                 if (Input.GetKey(KeyCode.A)) iNewDir = 1;
                 if (Input.GetKey(KeyCode.S)) iNewDir = 2;
                 if (Input.GetKey(KeyCode.D)) iNewDir = 3;
-                if (iNewDir >= 0 && (iNewDir == iCurrentDir) && !canMoveTo(iNewDir))
+                if (iNewDir >= 0 && (iNewDir == iCurrentDir) && !CanMoveTo(iNewDir))
                 {
                     iNewDir = -1;
                 }
@@ -80,6 +112,10 @@ public class PlayerController : MonoBehaviour
                 if (fCurrentDistance >= 1)
                 {
                     ResetPos();
+                    //Hemos terminado de movernos, le toca a los enemigos
+                    GameManager.manager.ProcessEnemyTurn();
+
+                    //Debug.Log("TURN ENDO!");
                 }
             }
             else
@@ -90,53 +126,45 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private bool canMoveTo(int c)
+    private bool CanMoveTo(int c)
     {
-        int[,] mapa = cmControlador.getMap();
+        //int[,] mapa = cmControlador.getMap();
+
+        //Pedimos a Dios el mapa activo
+        int[,] mapa = GameManager.manager.GetCurrentMap();
+
         switch (c)
         {
             case 0://Arriba
-                if (iPosz == 0) return false;
-
-                if (mapa[iPosz - 1, iPosx] !=1 && mapa[iPosz - 1, iPosx] != 2 && mapa[iPosz - 1, iPosx] != 9)
+                if (GameManager.manager.CanWalkToCell(new Vector2Int(iPosx, iPosz - 1)))
                 {
-                    Debug.Log("Me muevo a " + mapa[iPosz - 1, iPosx]);
                     iPosz--;
                     return true;
                 }
                 break;
             case 1://Izquierda
-                if (iPosx == 0) return false;
-
-                if (mapa[iPosz, iPosx - 1] != 1 && mapa[iPosz, iPosx - 1] != 2 && mapa[iPosz, iPosx - 1] != 9)
+                if (GameManager.manager.CanWalkToCell(new Vector2Int(iPosx - 1, iPosz)))
                 {
-                    Debug.Log("Me muevo a " + mapa[iPosz - 1, iPosx]);
                     iPosx--;
                     return true;
                 }
                 break;
             case 2://Abajo
-                if (iPosz == mapa.GetLength(0) - 1) return false;
-
-                if (mapa[iPosz + 1, iPosx] != 1 && mapa[iPosz + 1, iPosx] != 2 && mapa[iPosz + 1, iPosx] != 9)
+                if (GameManager.manager.CanWalkToCell(new Vector2Int(iPosx, iPosz + 1)))
                 {
-                    Debug.Log("Me muevo a "+ mapa[iPosz - 1, iPosx]);
                     iPosz++;
                     return true;
                 }
                 break;
-
             case 3://Derecha
-                if (iPosx == mapa.GetLength(1) - 1) return false;
-
-                if (mapa[iPosz, iPosx + 1] != 1 && mapa[iPosz, iPosx + 1] != 2 && mapa[iPosz, iPosx + 1] != 9)
+                if (GameManager.manager.CanWalkToCell(new Vector2Int(iPosx + 1, iPosz)))
                 {
-                    Debug.Log("Me muevo a " + mapa[iPosz, iPosx + 1]);
                     iPosx++;
                     return true;
                 }
                 break;
         }
+
         return false;
     }
     private bool rotateFacing(int newDir)
@@ -163,7 +191,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SetPos(Vector2 vPos)
+    public void SetIndexPos(Vector2 vPos)
     {
         iPosx = (int)vPos.x;
         iPosz = (int)vPos.y;
@@ -171,12 +199,26 @@ public class PlayerController : MonoBehaviour
 
     void ResetPos()
     {
+        /*
+         * CUIDAO AHI!
+         * ESTO VA A DAR PROBLEMAS CUANDO CAMBIEMOS DE MAPA
+         */
+
         //Centra el movimiendo a la casilla.
-        transform.position = new Vector3(iPosx - cmControlador.posz, iPosy -0.5f, cmControlador.posx - iPosz);
+
+        transform.localPosition = new Vector3(iPosx, transform.position.y, -iPosz);
+
+        //transform.position = new Vector3(iPosx - cmControlador.posz, iPosy -0.5f, cmControlador.posx - iPosz);
         iNewDir = -1;
         fCurrentDistance = 0;
-        Debug.Log("Estoy en: " + iPosx + " " + iPosz);
+        //Debug.Log("Estoy en: " + iPosx + " " + iPosz);
     }
+
+    public Vector2 GetIndexPosition()
+    {
+        return new Vector2(iPosx, iPosz);
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Goal")

@@ -73,7 +73,7 @@ public class CellMap : MonoBehaviour
 
             }
         }
-        GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
+        //GameManager.manager.SpawnPlayer(new Vector2(vPlayerSpawn.x, vPlayerSpawn.y));
     }
 
     // Update is called once per frame

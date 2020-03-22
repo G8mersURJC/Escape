@@ -7,6 +7,7 @@ public enum ActorType
     acPlayer,
     acEnemy
 }
+
 public class Actor
 {
     GameObject go;
@@ -78,7 +79,7 @@ public class Actor
     }
 
     //Comprueba si la vida es menor a 0 y actua en consecuencia teniendo en cuenta qué tipo de actor es
-    private void CheckDeath()
+    public void CheckDeath()
     {
         if(iLife<=0)
         {
@@ -89,6 +90,10 @@ public class Actor
                     GameManager.manager.ResetGame(3);
                     break;
                 case ActorType.acEnemy:
+                    //==============
+                    //TEMPORAL, CAMBIAR DESPUÉS A LA ANIMACIÓN DE MUERTE
+                    //==============
+                    GameManager.manager.RemoveEnemyActor(this);
                     break;
             }
 
