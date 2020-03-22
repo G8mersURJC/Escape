@@ -70,6 +70,7 @@ public class Actor
     public int Damage(int iDmg)
     {
         iLife -= iDmg;
+        GameManager.manager.HudController.ModifyHealthByAmount(iDmg * -1);
         return iLife;
     }
     public int Heal(int iHP)

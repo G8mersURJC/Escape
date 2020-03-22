@@ -56,11 +56,11 @@ public class CellMapV2 : MonoBehaviour
                     enemySpawnPositions.Add(new Vector2Int(j, i));
                 }
 
-                if (coordinates[i, j] != 9)
-                {
-                    cells[i, j].SetModel(goModelList[coordinates[i, j]], mapId);
+                //if (coordinates[i, j] != 9)
+                //{
+                    cells[i, j].SetModel(goModelList[coordinates[i, j]+(mapId*10)], mapId);
                     //cells[i, j].SetBehaviour();
-                }
+               // }
             }
             
         }

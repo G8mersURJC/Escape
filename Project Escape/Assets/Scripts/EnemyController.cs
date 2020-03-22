@@ -93,6 +93,7 @@ public class EnemyController : MonoBehaviour
             animator.Play("Punching");
             Debug.Log("PUM, EN LA BOQUITA!");
             //3. Hay que hacer damages al jugador
+            GameManager.manager.player.Damage(1);
 
             iNewDir = -1;
         }

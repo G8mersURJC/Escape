@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject goExit;
     public GameObject goMap;
     public InputField ifPlayerName;
-    public GameObject goHTP;
+    public GameObject goHTP, goLore;
 
     RankingManager rManager = new RankingManager();
    
@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     public Actor player = new Actor();
 
-    LifeHUDController HudController;
+    public LifeHUDController HudController;
 
 
     private List<MapData> mapList;       //Lista de todos los mapas en escena
@@ -213,5 +213,10 @@ public class GameManager : MonoBehaviour
             //Actualizar la IA del actor enemigo
             a.GetActor().GetComponent<EnemyController>().ProcessTurn();
         }
+    }
+
+    public void CloseLore()
+    {
+        goLore.SetActive(false);
     }
 }
