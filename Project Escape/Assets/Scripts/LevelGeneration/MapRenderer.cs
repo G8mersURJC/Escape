@@ -19,7 +19,7 @@ public class MapRenderer : MonoBehaviour
     {
         int[,] map = new int[50, 50];
 
-        StreamReader reader = new StreamReader("Assets/data/map" + number + ".txt");
+        StreamReader reader = new StreamReader(Application.streamingAssetsPath + "/data/map" + number + ".txt");
         for (int i = 0; i < 50; i++)
         {
             string sLine = reader.ReadLine();
