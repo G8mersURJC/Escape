@@ -10,19 +10,20 @@ public class LifeHUDController : MonoBehaviour
     private Vector3 v3HearthOffset;
 
     private int iCurrentMaxHealth = 2;  //2 "toques" por corazón
-    private int iCurrentHealth;  
+    private int iCurrentHealth;
     private int iMaxHealth = 20; //20 "toques" con 10 corazones
 
     private List<GameObject> lHearths;
 
     private void Awake()
     {
-        
+
     }
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     public void InitLHC()
@@ -50,7 +51,7 @@ public class LifeHUDController : MonoBehaviour
 
     public void ExpandMaxHealth()
     {
-        
+
         if (iCurrentMaxHealth < iMaxHealth)
         {
             iCurrentMaxHealth += 2;
@@ -75,20 +76,26 @@ public class LifeHUDController : MonoBehaviour
             iCurrentHealth = 0;
         }
         else if (iCurrentHealth > iCurrentMaxHealth)
-        { 
+        {
             iCurrentHealth = iCurrentMaxHealth;
         }
 
         UpdateSprites();
 
-        Debug.Log("Me quedan "+iCurrentHealth+" de" +iCurrentMaxHealth);
-    } 
+        Debug.Log("Me quedan " + iCurrentHealth + " de" + iCurrentMaxHealth);
+    }
+
+    public void FillHealth()
+    {
+        iCurrentHealth = iCurrentMaxHealth;
+        UpdateSprites();
+    }
 
     private void UpdateSprites()
     {
 
         int count = 2;
-        foreach(GameObject h in lHearths)
+        foreach (GameObject h in lHearths)
         {
             int dif = count - iCurrentHealth;
 
@@ -97,12 +104,12 @@ public class LifeHUDController : MonoBehaviour
                 //Corazón lleno
                 h.GetComponent<Image>().sprite = sFullHearth;
             }
-            else if(dif == 1)
+            else if (dif == 1)
             {
                 //Corazón medio lleno
                 h.GetComponent<Image>().sprite = sHalfHearth;
             }
-            else if(dif > 1)
+            else if (dif > 1)
             {
                 //Corazón vacio
                 h.GetComponent<Image>().sprite = sEmptyHearth;
@@ -112,10 +119,10 @@ public class LifeHUDController : MonoBehaviour
         }
     }
 
-    public void SetMaxHearts( int iNewHealth) //Corazones
+    public void SetMaxHearts(int iNewHealth) //Corazones
     {
 
-        int dif = iNewHealth - (iCurrentMaxHealth/2);
+        int dif = iNewHealth - (iCurrentMaxHealth / 2);
         for (int i = 0; i < dif; i++)
             ExpandMaxHealth();
     }
@@ -125,5 +132,5 @@ public class LifeHUDController : MonoBehaviour
         iCurrentHealth = i;
     }
 
-    
+
 }

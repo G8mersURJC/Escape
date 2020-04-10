@@ -11,14 +11,14 @@ public class TestManager : MonoBehaviour
     public int minRoomSize;
     public int maxRoomSize;
 
-    private CellMapV2 cm;
+    //private CellMapV2 cm;
     private LevelGenerator lg;
 
     private bool generating = false;
 
     void Start()
     {
-        cm = GetComponentInParent<CellMapV2>();
+        //cm = GetComponentInParent<CellMapV2>();
     }
 
     // Update is called once per frame
