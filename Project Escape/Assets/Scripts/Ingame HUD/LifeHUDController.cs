@@ -19,6 +19,7 @@ public class LifeHUDController : MonoBehaviour
     {
         
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -83,6 +84,12 @@ public class LifeHUDController : MonoBehaviour
 
         Debug.Log("Me quedan "+iCurrentHealth+" de" +iCurrentMaxHealth);
     } 
+
+    public void FillHealth()
+    {
+        iCurrentHealth = iCurrentMaxHealth;
+        UpdateSprites();
+    }
 
     private void UpdateSprites()
     {

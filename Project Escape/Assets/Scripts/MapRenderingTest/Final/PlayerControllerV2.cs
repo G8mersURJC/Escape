@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class PlayerControllerV2 : MonoBehaviour
 {
-    private Animator animator;
+    private bool bNewActionAvailable = true;
 
     private Vector2Int v2iCellPosition;
-    private bool bNewActionAvailable = true;
-    private float fWalkSpeed = 2.0f;
 
-    //Tiempo pulsado necesario para moverte
+    private float fWalkSpeed = 2.0f;
     private bool bMovementPressedLongEnough = false;
     private float fPressTimeToMove = 0.3f;
     private float fTimePressedToMove = 0.0f;
@@ -21,6 +19,13 @@ public class PlayerControllerV2 : MonoBehaviour
 
     private bool bWalkingForward = false;
     private float fTraveledDistance = 0;
+
+    private bool bAttacking = false;
+    private bool bDamageDealed = false;
+    private float fAttackAnimationDuration = 0.5f;
+    private float fCurrentAnimationTimer = 0.0f;
+
+    private Animator animator;
 
     void Start()
     {
@@ -49,12 +54,75 @@ public class PlayerControllerV2 : MonoBehaviour
         //====================================================
 
         UpdateMovement();
+
+        UpdateNormalAttackTimer();
     }
 
     //========================================================================================================
-    //UPDATE MOVIMIENTO
+    //MOVIMIENTO
     //========================================================================================================
 
+    //LLAMAR DESDE KEYBINDS (A través de GameManager)
+    public void ProcessMovementTowardsDirection(Vector2 direction)
+    {
+        if (!bNewActionAvailable)
+            return;
+
+        fTimeSinceLastMovementInput = 0.0f;
+
+        Vector2Int parsedDirection = ParseVector(direction);    //Adaptamos las componentes del vector para que valgan -1, 0 o 1.
+
+        RotateToFaceDirection(parsedDirection);
+
+        if (bMovementPressedLongEnough && CanMoveToPosition(v2iCellPosition + parsedDirection))
+        {
+            StartMovementToCell(parsedDirection);
+        }
+    }
+
+    private Vector2Int ParseVector(Vector2 v)
+    {
+        return new Vector2Int(NormalizeValue(v.x), NormalizeValue(v.y));
+    }
+
+    private int NormalizeValue(float value)
+    {
+        if (value > 0)
+            return 1;
+        else if (value < 0)
+            return -1;
+
+        return 0;
+    }
+
+    private void RotateToFaceDirection(Vector2Int direction)
+    {
+        if (direction.y == 1)
+            this.transform.rotation = Quaternion.Euler(0, 180, 0);  //Arriba
+        else if (direction.x == -1)
+            this.transform.rotation = Quaternion.Euler(0, -90, 0);  //Izquierda
+        else if (direction.y == -1)
+            this.transform.rotation = Quaternion.Euler(0, 0, 0);    //Abajo
+        else if (direction.x == 1)
+            this.transform.rotation = Quaternion.Euler(0, 90, 0);   //Derecha
+    }
+
+    private bool CanMoveToPosition(Vector2Int cellPosition)
+    {
+        return GameManager.manager.CanWalkToCell(cellPosition);
+    }
+
+    private void StartMovementToCell(Vector2Int dir)
+    {
+        v2iCellPosition += dir;
+        fTraveledDistance = 0;
+        bWalkingForward = true;
+        bNewActionAvailable = false;
+
+        animator.SetInteger("New Int", 1);
+    }
+
+    //Llamar desde Update
     private void UpdateMovement()
     {
         if (bWalkingForward)
@@ -119,72 +187,7 @@ public class PlayerControllerV2 : MonoBehaviour
     }
 
     //========================================================================================================
-    //ENTRADA MOVIMIENTO
-    //========================================================================================================
-
-    //LLAMAR DESDE KEYBINDS (A través de GameManager)
-    public void ProcessMovementTowardsDirection(Vector2 direction)
-    {
-        if (!bNewActionAvailable)
-            return;
-
-        fTimeSinceLastMovementInput = 0.0f;
-
-        Vector2Int parsedDirection = ParseVector(direction);    //Adaptamos las componentes del vector para que valgan -1, 0 o 1.
-
-        RotateToFaceDirection(parsedDirection);
-
-        if (bMovementPressedLongEnough && CanMoveToPosition(v2iCellPosition + parsedDirection))
-        {
-            StartMovementToCell(parsedDirection);
-        }
-    }
-
-    private Vector2Int ParseVector(Vector2 v)
-    {
-        return new Vector2Int(NormalizeValue(v.x), NormalizeValue(v.y));
-    }
-
-    private int NormalizeValue(float value)
-    {
-        if (value > 0)
-            return 1;
-        else if (value < 0)
-            return -1;
-
-        return 0;
-    }
-
-    private void RotateToFaceDirection(Vector2Int direction)
-    {
-        if (direction.y == 1)
-            this.transform.rotation = Quaternion.Euler(0, 180, 0);  //Arriba
-        else if (direction.x == -1)
-            this.transform.rotation = Quaternion.Euler(0, -90, 0);  //Izquierda
-        else if (direction.y == -1)
-            this.transform.rotation = Quaternion.Euler(0, 0, 0);    //Abajo
-        else if (direction.x == 1)
-            this.transform.rotation = Quaternion.Euler(0, 90, 0);   //Derecha
-    }
-
-    private bool CanMoveToPosition(Vector2Int cellPosition)
-    {
-        return GameManager.manager.CanWalkToCell(cellPosition);
-    }
-
-    private void StartMovementToCell(Vector2Int dir)
-    {
-        v2iCellPosition += dir;
-        fTraveledDistance = 0;
-        bWalkingForward = true;
-        bNewActionAvailable = false;
-
-        //Activar animación Walking
-        animator.SetInteger("New Int", 1);
-    }
-
-    //========================================================================================================
-    //ATAQUE
+    //ATAQUE NORMAL
     //========================================================================================================
 
     //LLAMAR DESDE KEYBINDS (A través de GameManager)
@@ -193,26 +196,66 @@ public class PlayerControllerV2 : MonoBehaviour
         if (!bNewActionAvailable)
             return;
 
-        Vector3 TargetCell = transform.position + Vector3.forward;
-        GameManager.manager.AttackInCell(new Vector2Int((int) TargetCell.x, (int) -TargetCell.z), 1);
-        animator.SetInteger("New Int", 2);  //Activar animación de ataque
-
         bNewActionAvailable = false;
+        bAttacking = true;
+
+        animator.SetInteger("New Int", 2);
+    }
+
+    //Llamar desde Update
+    private void UpdateNormalAttackTimer()
+    {
+        if (bAttacking)
+        {
+            UpdateAttackAnimationTimer();
+        }
+    }
+
+    private void UpdateAttackAnimationTimer()
+    {
+        fCurrentAnimationTimer += Time.deltaTime;
+
+        if (fCurrentAnimationTimer > 0.45f && !bDamageDealed)
+        {
+            AttackCellInFront();
+        }
+
+        if (fCurrentAnimationTimer > fAttackAnimationDuration)
+        {
+            StopAttackingAction();
+        }
+    }
+
+    private void AttackCellInFront()
+    {
+        Vector3 TargetCell = transform.position + transform.forward;
+        GameManager.manager.AttackInCell(new Vector2Int((int) TargetCell.x, (int) -TargetCell.z), 1);
+
+        bDamageDealed = true;
+    }
+
+    private void StopAttackingAction()
+    {
+        fCurrentAnimationTimer = 0;
+        bAttacking = false;
+        bDamageDealed = false;
+
+        animator.SetInteger("New Int", 0);
 
         EndTurn();
     }
-    
-    //LLAMAR DESDE GAMEMANAGER CUANDO VUELVA A SER NUESTRO TURNO
+
+    //========================================================================================================
+
+    private void EndTurn()
+    {
+        //GameManager.manager.StartEnemyTurns();
+    }
+
     public void SetActionAvailable(bool available)
     {
         this.bNewActionAvailable = available;
     }
-
-    private void EndTurn()
-    {
-        //Notificamos a GameManager que ya he terminado mi turno
-    }
-
 
     public void SetCellPosition(Vector2Int position)
     {

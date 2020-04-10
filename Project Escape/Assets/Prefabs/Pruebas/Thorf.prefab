@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 2432829393833127738}
   - component: {fileID: 4793221523620131629}
   - component: {fileID: -3939901666516776449}
+  - component: {fileID: -2160419867749085727}
   m_Layer: 0
   m_Name: Thorf
   m_TagString: Player
@@ -417,6 +418,25 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.61, y: 1.14, z: 0.6}
   m_Center: {x: 0, y: 0.93, z: 0}
+--- !u!95 &-2160419867749085727
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3116087763028807260}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 43589da3595e3fd478a6883732975cff, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &3224200447633967924
 GameObject:
   m_ObjectHideFlags: 0

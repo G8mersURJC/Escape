@@ -7,9 +7,8 @@ public class PlayerControlerRT : MonoBehaviour
     private bool bNewActionAvailable = true;
 
     private Vector2Int v2iCellPosition;
-    private float fWalkSpeed = 2.0f;
 
-    //Tiempo pulsado necesario para moverte
+    private float fWalkSpeed = 2.0f;
     private bool bMovementPressedLongEnough = false;
     private float fPressTimeToMove = 0.3f;
     private float fTimePressedToMove = 0.0f;
@@ -18,15 +17,22 @@ public class PlayerControlerRT : MonoBehaviour
     private float fMaxWaitingTimeForMovement = 0.005f;
     private float fTimeSinceLastMovementInput = 0.005f;
 
+    private bool bWalkingForward = false;
     private float fTraveledDistance = 0;
 
-    private bool bWalkingForward = false;
+    private bool bAttacking = false;
+    private bool bDamageDealed = false;
+    private float fAttackAnimationDuration = 0.5f;
+    private float fCurrentAnimationTimer = 0.0f;
 
     private RenderingTestManager manager;
+    private Animator animator;
+
 
     void Start()
     {
         manager = GameObject.Find("Dios impostor").GetComponent<RenderingTestManager>();
+        animator = GetComponent<Animator>();
     }
     
     void Update()
@@ -43,75 +49,14 @@ public class PlayerControlerRT : MonoBehaviour
         }
 
         //Ataque normal
-        else if(Input.GetKeyDown(KeyCode.E) /* || Input.GetButtonDown("Attack") */)
+        else if(Input.GetKeyDown(KeyCode.E) /* || Input.GetButtonDown("Attack") */)                 
         {
             ProcessNormalAtack();
         }
 
         UpdateMovement();
-    }
 
-    private void UpdateMovement()
-    {
-        if (bWalkingForward)
-        {
-            WalkForward();
-        }
-        else
-        {
-            UpdateMovementPressedTimer();   //Actualizamos el tiempo que llevamos pulsando
-
-            UpdateMovementInputTimeOut();   //Actualizamos el tiempo 
-        }
-    }
-
-    private void WalkForward()
-    {
-        transform.Translate(Vector3.forward * fWalkSpeed * Time.deltaTime);
-        fTraveledDistance += fWalkSpeed * Time.deltaTime;
-
-        if (fTraveledDistance > 1)
-        {
-            StopWalking();
-        }
-    }
-
-    private void StopWalking()
-    {
-        transform.localPosition = new Vector3(v2iCellPosition.x, transform.position.y, -v2iCellPosition.y);
-        bWalkingForward = false;
-        bNewActionAvailable = true;
-
-        EndTurn();
-    }
-
-    private void UpdateMovementPressedTimer()
-    {
-        if (fTimeSinceLastMovementInput < fMaxWaitingTimeForMovement && !bMovementPressedLongEnough)
-        {
-            fTimePressedToMove += Time.deltaTime;
-            if (fTimePressedToMove >= fPressTimeToMove)
-            {
-                //Hemos presionado durante el tiempo suficiente para poder movernos
-                bMovementPressedLongEnough = true;
-            }
-        }
-    }
-
-    private void UpdateMovementInputTimeOut()
-    {
-        if (fTimeSinceLastMovementInput < fMaxWaitingTimeForMovement)
-        {
-            fTimeSinceLastMovementInput += Time.deltaTime;
-        }
-        else if (fTimeSinceLastMovementInput >= fMaxWaitingTimeForMovement)
-        {
-            //Hace tiempo que no tenemos entradas de movimiento, reseteamos el contador de tiempo pulsando
-            //para movernos.
-
-            fTimePressedToMove = 0.0f;
-            bMovementPressedLongEnough = false;
-        }
+        UpdateNormalAttackTimer();
     }
 
     //========================================================================================================
@@ -174,10 +119,76 @@ public class PlayerControlerRT : MonoBehaviour
         fTraveledDistance = 0;
         bWalkingForward = true;
         bNewActionAvailable = false;
+
+        animator.SetInteger("New Int", 1);
+    }
+
+    //Llamar desde Update
+    private void UpdateMovement()
+    {
+        if (bWalkingForward)
+        {
+            WalkForward();
+        }
+        else
+        {
+            UpdateMovementPressedTimer();   //Actualizamos el tiempo que llevamos pulsando
+
+            UpdateMovementInputTimeOut();   //Actualizamos el tiempo 
+        }
+    }
+
+    private void WalkForward()
+    {
+        transform.Translate(Vector3.forward * fWalkSpeed * Time.deltaTime);
+        fTraveledDistance += fWalkSpeed * Time.deltaTime;
+
+        if (fTraveledDistance > 1)
+        {
+            StopWalking();
+        }
+    }
+
+    private void StopWalking()
+    {
+        transform.localPosition = new Vector3(v2iCellPosition.x, transform.position.y, -v2iCellPosition.y);
+        bWalkingForward = false;
+        animator.SetInteger("New Int", 0);
+
+        EndTurn();
+    }
+
+    private void UpdateMovementPressedTimer()
+    {
+        if (fTimeSinceLastMovementInput < fMaxWaitingTimeForMovement && !bMovementPressedLongEnough)
+        {
+            fTimePressedToMove += Time.deltaTime;
+            if (fTimePressedToMove >= fPressTimeToMove)
+            {
+                //Hemos presionado durante el tiempo suficiente para poder movernos
+                bMovementPressedLongEnough = true;
+            }
+        }
+    }
+
+    private void UpdateMovementInputTimeOut()
+    {
+        if (fTimeSinceLastMovementInput < fMaxWaitingTimeForMovement)
+        {
+            fTimeSinceLastMovementInput += Time.deltaTime;
+        }
+        else if (fTimeSinceLastMovementInput >= fMaxWaitingTimeForMovement)
+        {
+            //Hace tiempo que no tenemos entradas de movimiento, reseteamos el contador de tiempo pulsando
+            //para movernos.
+
+            fTimePressedToMove = 0.0f;
+            bMovementPressedLongEnough = false;
+        }
     }
 
     //========================================================================================================
-    //ATAQUE
+    //ATAQUE NORMAL
     //========================================================================================================
 
     //LLAMAR DESDE KEYBINDS (A través de GameManager)
@@ -186,26 +197,61 @@ public class PlayerControlerRT : MonoBehaviour
         if (!bNewActionAvailable)
             return;
 
-        //Determinar hacia qué casilla estamos mirando
-        Vector3 TargetCell = transform.position + transform.forward;
+        bNewActionAvailable = false;
+        bAttacking = true;
 
-        //Debug.Log("Ataque en: "+TargetCell.x + ", " + -TargetCell.z);
+        animator.SetInteger("New Int", 2);
+    }
+
+    //Llamar desde Update
+    private void UpdateNormalAttackTimer()
+    {
+        if (bAttacking)
+        {
+            UpdateAttackAnimationTimer();
+        }
+    }
+
+    private void UpdateAttackAnimationTimer()
+    {
+        fCurrentAnimationTimer += Time.deltaTime;
+
+        if (fCurrentAnimationTimer > 0.45f && !bDamageDealed)
+        {
+            AttackCellInFront();
+        }
+
+        if (fCurrentAnimationTimer > fAttackAnimationDuration)
+        {
+            StopAttackingAction();
+        }
+    }
+
+    private void AttackCellInFront()
+    {
+        Vector3 TargetCell = transform.position + transform.forward;
         manager.AttackInCell(new Vector2Int((int) TargetCell.x, (int) -TargetCell.z), 1);
+
+        bDamageDealed = true;
+    }
+
+    private void StopAttackingAction()
+    {
+        fCurrentAnimationTimer = 0;
+        bAttacking = false;
+        bDamageDealed = false;
+
+        animator.SetInteger("New Int", 0);
 
         EndTurn();
     }
 
+    //========================================================================================================
 
     private void EndTurn()
     {
-        //Notificamos a GameManager que ya he terminado mi turno
-        manager.ProcessEnemyTurn();
+        manager.StartEnemyTurns();
     }
-
-
-    //========================================================================================================
-    //GET Y SET
-    //========================================================================================================
 
 
     public void SetActionAvailable(bool available)

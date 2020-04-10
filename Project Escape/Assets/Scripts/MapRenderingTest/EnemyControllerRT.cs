@@ -5,24 +5,27 @@ using UnityEngine;
 public class EnemyControllerRT : MonoBehaviour
 {
     private Vector2Int v2iCellPosition;
-    private float fWalkSpeed = 3.0f;
-
-    private bool bWalkingForward = false;
-    private float fTraveledDistance = 0;
-
-    Animator animator;
-    public float fTriggerColiderRadius;
 
     private bool bActivated = false;
 
+    private bool bWalkingForward = false;
+    private float fWalkSpeed = 3.0f;
+    private float fTraveledDistance = 0;
+
+    private bool bAttacking = false;
+    private bool bDamageDealed = false;
+    private float fAttackAnimationDuration = 0.5f;
+    private float fCurrentAnimationTimer = 0.0f;
+
     private RenderingTestManager manager;
+    private Animator animator;
+    public float fTriggerColiderRadius;
 
     // Start is called before the first frame update
     void Start()
     {
         GetComponent<SphereCollider>().radius = fTriggerColiderRadius;
         animator = GetComponent<Animator>();
-
         manager = GameObject.Find("Dios impostor").GetComponent<RenderingTestManager>();
     }
 
@@ -32,6 +35,11 @@ public class EnemyControllerRT : MonoBehaviour
         if (bWalkingForward)
         {
             WalkForward();
+        }
+
+        if (bAttacking)
+        {
+            UpdateAttackAnimationTimer();
         }
     }
 
@@ -54,7 +62,36 @@ public class EnemyControllerRT : MonoBehaviour
         //Activar animación Idle
         //animator.
 
-        //Turno concluido
+        EndTurn();
+    }
+
+    private void UpdateAttackAnimationTimer()
+    {
+        fCurrentAnimationTimer += Time.deltaTime;
+
+        if (fCurrentAnimationTimer > fAttackAnimationDuration / 2 && !bDamageDealed)
+        {
+            DealDamageToPlayer();
+        }
+
+        if (fCurrentAnimationTimer > fAttackAnimationDuration)
+        {
+            StopAttackingAction();
+        }
+    }
+
+    private void DealDamageToPlayer()
+    {
+        manager.AttackPlayer(1);
+        bDamageDealed = true;
+    }
+
+    private void StopAttackingAction()
+    {
+        fCurrentAnimationTimer = 0;
+        bAttacking = false;
+        bDamageDealed = false;
+
         EndTurn();
     }
 
@@ -71,7 +108,7 @@ public class EnemyControllerRT : MonoBehaviour
 
         if (IsCloseEnoughToPosition(playerPos))
         {
-            AttackPlayer(playerPos);
+            StartAttack(playerPos);
         }
         else
         {
@@ -86,12 +123,11 @@ public class EnemyControllerRT : MonoBehaviour
         return distance == 1;   //Si la distancia es 1, significa que el jugador se encuentra en una casilla de al lado
     }
 
-    private void AttackPlayer(Vector2Int playerPos)
+    private void StartAttack(Vector2Int playerPos)
     {
         RotateToFacePosition(playerPos);
         animator.Play("Punching");
-  
-        EndTurn();
+        bAttacking = true;
     }
 
     private void RotateToFacePosition(Vector2Int position)
@@ -158,6 +194,7 @@ public class EnemyControllerRT : MonoBehaviour
     private void EndTurn()
     {
         //Notificamos a GameManager que ya he terminado mi turno
+        manager.NextEnemyTurn();
     }
 
     private void OnTriggerStay(Collider other)

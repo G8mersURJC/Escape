@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RenderingTestManager : MonoBehaviour
 {
+    public GameObject goContinuePanel;
+
     public Actor player = new Actor();
     public GameObject goPlayer;
 
@@ -19,7 +21,6 @@ public class RenderingTestManager : MonoBehaviour
         mapList.Add(mr.LoadAndRenderMapFromFile(1));
 
         iActiveMap = 0;
-
 
         SpawnPlayer(mapList[iActiveMap].GetMapStart());
     }
@@ -45,7 +46,6 @@ public class RenderingTestManager : MonoBehaviour
         return mapList[iActiveMap].IsCellWalkable(cellPos);
     }
 
-
     //Cuando el jugador quiere atacar a la casilla que mira
     public void AttackInCell(Vector2Int cellPosition, int damage)
     {
@@ -53,24 +53,103 @@ public class RenderingTestManager : MonoBehaviour
         //Hay que comprobar si hay un enemigo en dicha casilla
         if (enemy != null)
         {
-            //Reducimos la salud del enemigo
-            Debug.Log("ME MORÍ NO MAS");
-
+            //En esta prueba, nos cargamos al enemigo directamente
             mapList[iActiveMap].RemoveEnemyActorFromList(enemy);
             Destroy(enemy.GetActor());
         }
     }
 
-    public void ProcessEnemyTurn()
+    int playerHP = 3;
+
+    public void AttackPlayer(int damage)
     {
-        //El jugador ya ha procesado su turno, le toca ahora a los enemigos
-        foreach (Actor a in mapList[iActiveMap].GetEnemyList())
+        //HudController.ModifyHealthByAmount(-iDmg);
+        //player.Damage(damage);
+
+        if(playerHP > 0)
         {
-            //Actualizar la IA del actor enemigo
-            a.GetActor().GetComponent<EnemyControllerRT>().ProcessTurn();
+            playerHP -= damage;
+
+            Debug.Log(playerHP);
+
+            if (playerHP <= 0)
+            {
+                SetupContinueScreen();
+            }
+        }
+    }
+
+    //========================================================================================================
+    //CONTROL DE TURNOS
+    //========================================================================================================
+
+    int enemyTurnIndex;
+
+    public void StartEnemyTurns()
+    {
+        enemyTurnIndex = 0;
+
+        if(mapList[0].GetEnemyList().Count > 0)
+        {
+            mapList[0].GetEnemyList()[enemyTurnIndex].GetActor().GetComponent<EnemyControllerRT>().ProcessTurn();
+        }
+    }
+
+    public void NextEnemyTurn()
+    {
+        if(playerHP <= 0)
+        {
+            enemyTurnIndex = 0;
+            return;
         }
 
+        enemyTurnIndex++;
+
+        if(enemyTurnIndex < mapList[0].GetEnemyList().Count)
+        {
+            mapList[0].GetEnemyList()[enemyTurnIndex].GetActor().GetComponent<EnemyControllerRT>().ProcessTurn();
+        }
+        else
+        {
+            player.GetActor().GetComponent<PlayerControlerRT>().SetActionAvailable(true);
+        }
+    }
+
+    //========================================================================================================
+    //CONTROL DE GAME OVER
+    //========================================================================================================
+
+    //Llamar cuando el jugador haya muerto
+    public void SetupContinueScreen()
+    {
+        //Sustituir por la puntuación requerida para revivir
+        if (true)
+        {
+            goContinuePanel.SetActive(true);
+        }
+        else
+        {
+            ProcessGameOver();
+        }
+    }
+
+    public void ContinueButtonPressed()
+    {
+        goContinuePanel.SetActive(false);
 
         player.GetActor().GetComponent<PlayerControlerRT>().SetActionAvailable(true);
+        //player.AddPoints(-250);
+        //HudController.FillHealth();
+        playerHP = 3;
+    }
+
+    public void SurrenderButtonPressed()
+    {
+        ProcessGameOver();
+    }
+
+    private void ProcessGameOver()
+    {
+
     }
 }
