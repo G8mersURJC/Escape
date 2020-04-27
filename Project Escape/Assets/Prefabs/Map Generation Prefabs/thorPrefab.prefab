@@ -43,7 +43,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 20
+  m_Intensity: 5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -137,6 +137,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c68ee95f2a5f61b48b417efb78e34b4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &2002344820706771934
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 4147452147906985510}
+    m_Modifications:
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231801, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 111869075458231802, guid: ce09ceda3ee52c140a48e27680c37f66,
+        type: 3}
+      propertyPath: m_Name
+      value: Torch Light
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ce09ceda3ee52c140a48e27680c37f66, type: 3}
 --- !u!1001 &9003822721631819068
 PrefabInstance:
   m_ObjectHideFlags: 0
