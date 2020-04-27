@@ -100,7 +100,10 @@ public class EnemyControllerV2 : MonoBehaviour
     {
         if (!bActivated)
         {
-            EndTurn();
+            Wander();
+            
+
+            //EndTurn();
             return;
         }
 
@@ -112,8 +115,15 @@ public class EnemyControllerV2 : MonoBehaviour
         }
         else
         {
-            MoveTowardsPlayer(playerPos);
+            MoveTowardsPosition(playerPos);
         }
+    }
+
+    private void Wander()
+    {
+        //Con una X probabilidad, te vas a mover en una dirección aleatoria.
+        //Cuando termines de moverte, vas a terminar tu turno como toca
+        MoveTowardsPosition(new Vector2Int(v2iCellPosition.x + Random.Range(-5, 5), v2iCellPosition.y + Random.Range(-5, 5)));
     }
 
     private bool IsCloseEnoughToPosition(Vector2 pos)
@@ -142,7 +152,7 @@ public class EnemyControllerV2 : MonoBehaviour
             this.transform.rotation = Quaternion.Euler(0, 90, 0);   //Derecha
     }
 
-    private void MoveTowardsPlayer(Vector2Int playerPos)
+    private void MoveTowardsPosition(Vector2Int playerPos)
     {
         Vector2Int direction = CalculateDirectionToMoveTowardsPosition(playerPos);
 

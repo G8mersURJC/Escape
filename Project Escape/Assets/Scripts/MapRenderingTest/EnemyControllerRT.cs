@@ -9,7 +9,7 @@ public class EnemyControllerRT : MonoBehaviour
     private bool bActivated = false;
 
     private bool bWalkingForward = false;
-    private float fWalkSpeed = 3.0f;
+    private float fWalkSpeed = 4.0f;
     private float fTraveledDistance = 0;
 
     private bool bAttacking = false;
@@ -20,6 +20,8 @@ public class EnemyControllerRT : MonoBehaviour
     private RenderingTestManager manager;
     private Animator animator;
     public float fTriggerColiderRadius;
+
+    private int iMaxDistanceToWanderAround = 12;
 
     // Start is called before the first frame update
     void Start()
@@ -100,23 +102,51 @@ public class EnemyControllerRT : MonoBehaviour
     {
         if (!bActivated)
         {
-            EndTurn();
+            Wander();
             return;
         }
 
         Vector2Int playerPos = manager.player.GetActor().GetComponent<PlayerControlerRT>().GetCellPosition();
 
-        if (IsCloseEnoughToPosition(playerPos))
+        if (IsNextToPosition(playerPos))
         {
             StartAttack(playerPos);
         }
         else
         {
-            MoveTowardsPlayer(playerPos);
+            MoveTowardsPosition(playerPos);
         }
     }
 
-    private bool IsCloseEnoughToPosition(Vector2 pos)
+    private void Wander()
+    {
+        Vector2Int playerPos = manager.player.GetActor().GetComponent<PlayerControlerRT>().GetCellPosition();
+
+        //Comprobar si no estamos a tomar por culo del jugador.
+        if (IsCloseToPosition(playerPos))
+            MoveTowardsPosition(new Vector2Int(v2iCellPosition.x + RandomDirection(), v2iCellPosition.y + RandomDirection()));
+        else
+            EndTurn();
+
+    }
+
+    private bool IsCloseToPosition(Vector2 pos)
+    {
+        int distance = (int)(Mathf.Abs(v2iCellPosition.x - pos.x) + Mathf.Abs(v2iCellPosition.y - pos.y));
+
+        return distance < iMaxDistanceToWanderAround;
+    }
+
+    private int RandomDirection()
+    {
+        int value = Random.Range(1, 5);
+
+        if (Random.Range(1, 7) > 3)  value = -value;
+
+        return value;
+    }
+
+    private bool IsNextToPosition(Vector2 pos)
     {
         int distance = (int) (Mathf.Abs(v2iCellPosition.x - pos.x) + Mathf.Abs(v2iCellPosition.y - pos.y));
 
@@ -142,7 +172,7 @@ public class EnemyControllerRT : MonoBehaviour
             this.transform.rotation = Quaternion.Euler(0, 90, 0);   //Derecha
     }
 
-    private void MoveTowardsPlayer(Vector2Int playerPos)
+    private void MoveTowardsPosition(Vector2Int playerPos)
     {
         Vector2Int direction = CalculateDirectionToMoveTowardsPosition(playerPos);
 
