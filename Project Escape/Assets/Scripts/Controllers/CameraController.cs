@@ -24,8 +24,6 @@ public class CameraController : MonoBehaviour
             transform.rotation = Quaternion.Euler(dAngle, 0, 0);
             //Se desplaza con el radio indicado acorde a la rotación aplicada.
             transform.Translate(-Vector3.forward * dRadious);
-        }
-
-       
+        }  
     }
 }
